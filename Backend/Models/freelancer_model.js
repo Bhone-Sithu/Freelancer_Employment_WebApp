@@ -27,6 +27,9 @@ const freelancer_schema = mongoose.Schema({
     role:{
         type:String
     },
+    cv:{
+        type:String
+    },
     currency:{
         type:Number
     }

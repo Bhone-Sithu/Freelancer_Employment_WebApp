@@ -7,19 +7,22 @@ const login = async (req, res) => {
     if (login_account)
         return res.status(200).json({
             message: 'Admin Login successful',
-            data: login_account
+            role:"admin",
+            id: login_account.id
         })
     login_account = await Employer.findOne({ email: email, password: password });
     if (login_account)
         return res.status(200).json({
             message: 'Employer Login successful',
-            data: login_account
+            role:"employer",
+            id: login_account.id
         })
     login_account = await Freelancer.findOne({ email: email, password: password });
     if(login_account)
         return res.status(200).json({
             message: 'Freelancer Login successful',
-            data: login_account
+            role:"freelancer",
+            id: login_account.id
         })
     else
         res.status(400).json({

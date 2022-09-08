@@ -14,11 +14,26 @@ const register_employer = async (req, res) => {
         currency: 0
     }
     
+    // for (let i = 0; i < 100; i++) {
+    //     const mock_employer = {
+    //         email: `mock_email${i}@gmail.com`,
+    //         password: "123",
+    //         name: "John",
+    //         phone: 09121234568,
+    //         country: "Myanmar",
+    //         company_name: "Faker",
+    //         company_size: 100,
+    //         is_approved: false,
+    //         company_address: "SanChaung",
+    //         currency: 0
+    //     }
+    //     const registered = await Employer.create(mock_employer);
+    // }
     const registered = await Employer.create(employer);
     res.status(201).json({messag:"Employer Account is registered"});
 }
 const get_employers = async (req, res) => {
-    const employers = await Employer.find({});
+    const employers = await Employer.find({is_approved:true});
     res.status(200).json(employers)
 }
 const get_employer = async (req, res) => {
@@ -43,6 +58,7 @@ const update_employer = async (req, res) => {
 }
 const delete_employer = async (req, res) => {
     const deleted = await Employer.findByIdAndDelete(req.params.id);
+    // const deleted = await Employer.deleteMany({email:"hi2@gmail.com"})
     res.status(200).json(deleted);
 }
 module.exports = {

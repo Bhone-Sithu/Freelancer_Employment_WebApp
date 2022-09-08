@@ -11,11 +11,14 @@ const freelancer_register = async (data) =>{
       language: data.get('language').split(','),
       skillset: data.get('skillset').split(','),
     };
-    // const res = await axios.post('/api/freelancers/register', freelancer);
-    // return res.status;
-    console.log(freelancer);
+    const res = await axios.post(`${process.env.REACT_APP_HOST}api/freelancers/register`, freelancer);
+    return res.status;
 }
 const freelancers_get = () => {
     console.log("hi");
 }
-export {freelancer_register, freelancers_get};
+const freelancer_delete = async(id) => {
+  const res = await axios.delete(`${process.env.REACT_APP_HOST}api/freelancers/delete/${id}`)
+  return res.status;
+}
+export {freelancer_register, freelancers_get,freelancer_delete};
