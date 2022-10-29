@@ -3,7 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
+import { Link } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -14,18 +14,73 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
 import Alert from '@mui/material/Alert';
-import {employer_register,employers_get} from '../Components/Function/employer_function';
+import { CountryDropdown } from 'react-country-region-selector';
+import axios from "axios"
+import { employer_register, employers_get } from '../Components/Function/employer_function';
+let countryList = require('../country.js')
 
 
 const theme = createTheme();
 
 export default function Employer_Register() {
-  const [status,setStatus] = React.useState(0);
-  const handleSubmit = async(event) => {
-    const status_code = await employer_register(event);
-    setStatus(status_code);
-    
+  let country_array = countryList.map((country) => <MenuItem value={country}>{country}</MenuItem>)
+  const [status, setStatus] = React.useState(0);
+  const [country, setCountry] = React.useState(0);
+  const [error, setError] = React.useState({
+    email: "",
+    password: "",
+    phone: "",
+    name: "",
+    country: "",
+    company_name: "",
+    company_size: "",
+    company_address: "",
+    company_industry: "",
+  });
+
+  const validation = async (data) => {
+    let pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+    let temp = {
+      email: "",
+      password: "",
+      phone: "",
+      name: "",
+      country: "",
+      company_name: "",
+      company_size: "",
+      company_address: "",
+      company_industry: "",
+    }
+    let error_free = true
+    let res = await axios.post(process.env.REACT_APP_HOST + "api/employers/email_duplicate", { email: data.get("email") })
+    if (res.data.is_duplicate) { temp.email = "Email is already taken"; error_free = false }
+    if (!data.get("email").match(pattern)) { temp.email = "Invalid Email"; error_free = false }
+    if (data.get("password").trim() === "") { temp.password = "Password is Required!"; error_free = false }
+    if (data.get("phone").trim() === "") { temp.phone = "Phone is Required!"; error_free = false }
+    if (data.get("name").trim() === "") { temp.name = "name is Required!"; error_free = false }
+    if (data.get("company_name").trim() === "") { temp.company_name = "company_name is Required!"; error_free = false }
+    if (data.get("company_size").trim() === "") { temp.company_size = "company_size is Required!"; error_free = false }
+    if (data.get("company_address").trim() === "") { temp.company_address = "company_address is Required!"; error_free = false }
+    if (data.get("country").trim() === "") { temp.country = "country is Required!"; error_free = false }
+    if (data.get("company_industry").trim() === "") { temp.company_industry = "company_industry is Required!"; error_free = false }
+    setError(temp)
+    return error_free;
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    let validate_result = await validation(data)
+    setStatus(0);
+    if (validate_result) {
+      console.log(validate_result)
+      const status_code = await employer_register(data);
+      setStatus(status_code);
+    }
+
+
   };
 
   return (
@@ -40,142 +95,149 @@ export default function Employer_Register() {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <img src='Lancer_logo.png' width={200} height={200} style={{ borderRadius: "50%" }} />
+<br></br>
           <Typography component="h1" variant="h5">
             Employer Registration Form
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              {status == 201 ? <Grid item xs={12}>
+              {status === 201 ? <Grid item xs={12}>
                 <Alert severity="success">Your Registration is completed and background checking is in progress.<br /> Please wait for an email for the admins' approval.</Alert>
               </Grid> : null}
+              <Grid item xs={12} sm={6}>
+                <TextField
 
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
                   fullWidth
                   id="email"
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={error.email === "" ? false : true}
+                  helperText={error.email}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  required
+
                   fullWidth
                   name="password"
                   label="Password"
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  error={error.password === "" ? false : true}
+                  helperText={error.password}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  required
+
                   fullWidth
                   id="phone"
                   label="Phone Number"
                   name="phone"
+                  error={error.phone === "" ? false : true}
+                  helperText={error.phone}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  required
+
                   fullWidth
                   id="name"
                   label="User Name"
                   name="name"
+                  error={error.name === "" ? false : true}
+                  helperText={error.name}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  required
+                {/* <TextField
+
                   fullWidth
                   id="country"
                   label="Country"
                   name="country"
-                />
+                /> */}
+                <FormControl fullWidth error={error.country === "" ? false : true}>
+                  <InputLabel id="country">Country</InputLabel>
+                  <Select
+                    labelId="country"
+                    id="country"
+                    label="Country"
+                    name="country"
+                  >
+                    {country_array}
+
+                  </Select>
+                  <FormHelperText>{error.country}</FormHelperText>
+                </FormControl>
+
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  required
+
                   fullWidth
                   id="company_name"
                   label="Company Name"
                   name="company_name"
+                  error={error.company_name === "" ? false : true}
+                  helperText={error.company_name}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  required
+
                   fullWidth
                   id="company_size"
                   label="Company Size"
                   name="company_size"
+                  error={error.company_size === "" ? false : true}
+                  helperText={error.company_size}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="company_address"
-                  label="Company Address"
-                  name="company_address"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth>
+                <FormControl fullWidth error={error.company_industry === "" ? false : true}>
                   <InputLabel id="industry">Company Industry</InputLabel>
                   <Select
                     labelId="industry"
                     id="company_industry"
-                    label="industry"
+                    label="Company Industry"
                     name="company_industry"
                   >
                     <MenuItem value={"Web and Mobile Software"}>Web and Mobile Software</MenuItem>
                     <MenuItem value={"Business"}>Business</MenuItem>
                     <MenuItem value={"Entertainment"}>Entertainment</MenuItem>
                   </Select>
+                  <FormHelperText>{error.company_industry}</FormHelperText>
                 </FormControl>
               </Grid>
+              <Grid item xs={12} sm={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  id="company_address"
+                  label="Company Address"
+                  name="company_address"
+                  error={error.company_address === "" ? false : true}
+                  helperText={error.company_address}
+                />
+              </Grid>
+
+
             </Grid>
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2 ,backgroundColor:"#886fff"}}
             >
               Register
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link to="/login">
                   Already have an account? Login
                 </Link>
               </Grid>

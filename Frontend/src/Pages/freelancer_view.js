@@ -28,9 +28,9 @@ function FeaturedPost() {
     const { id } = useParams();
     const [project, setProject] = useState({ candidate: [] });
     const [status, setStatus] = useState(0);
-    const [freelancer, setFreelancer] = useState({skillset:[],language:[]});
+    const [freelancer, setFreelancer] = useState({ skillset: [], language: [], invitations:[] });
+    const [message, setMessage] = useState("")
     const project_id = localStorage.getItem("project_id");
-
     // let freelancers = []
     useEffect(() => {
         const get_projects = async () => {
@@ -44,10 +44,18 @@ function FeaturedPost() {
         }
         get_projects();
         console.log("hi")
-    },[])
+    }, [])
+    const invite = async (freelancer_id) => {
+        const invite_id = localStorage.getItem("invite_id");
+        const res = await axios.put(`${process.env.REACT_APP_HOST}api/projects/invite/${freelancer_id}`, { invite_id });
+        setMessage("Invited")
+        console.log(status);
+        setStatus(res.status);
+    }
     const accept = async (freelancer_id) => {
         const res = await axios.put(`${process.env.REACT_APP_HOST}api/projects/accept/${project_id}`, { freelancer_id });
         console.log(status);
+        setMessage("Accepted")
         setStatus(res.status);
     }
     return (
@@ -88,28 +96,36 @@ function FeaturedPost() {
                     </Grid>
                     {status == 200 ?
                         <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
-                            <Alert severity="success"> You have successfully accepted {freelancer.name} for this project.</Alert>
-                        </Grid> : 
-                        localStorage.getItem("project_id") ?
-                        <Grid item xs={12}>
-                            <Button
-                                fullWidth
-                                onClick={() => accept(freelancer._id)}
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
-                            >
-                                Accept
-                            </Button>
+                            <Alert severity="success"> You have successfully {message} {freelancer.name} for this project.</Alert>
                         </Grid> :
-                        <Grid item xs={12}>
-                            <Button
-                                onClick={() => accept(freelancer.id)}
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
-                            >
-                                Invite
-                            </Button>
-                        </Grid>
+                        localStorage.getItem("project_id") ?
+                            <Grid item xs={12}>
+                                <Button
+                                    fullWidth
+                                    onClick={() => accept(freelancer._id)}
+                                    variant="contained"
+                                    sx={{ mt: 3, mb: 2 }}
+                                >
+                                    Accept
+                                </Button>
+                            </Grid> :
+                            localStorage.getItem("invite_id") ?
+                                freelancer.invitations.includes(localStorage.getItem("invite_id")) ?
+                                    <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
+                                        <Alert severity="error"> You have already invited {freelancer.name} for this project.</Alert>
+                                    </Grid>
+                                    :
+                                    <Grid item xs={12}>
+                                        <Button
+                                            fullWidth
+                                            onClick={() => invite(freelancer._id)}
+                                            variant="contained"
+                                            sx={{ mt: 3, mb: 2 }}
+                                        >
+                                            Invite
+                                        </Button>
+                                    </Grid> : null
+
                     }
 
                 </Grid>

@@ -25,6 +25,7 @@ import axios from "axios";
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
 import {employer_delete} from '../Function/employer_function';
+import {useNavigate} from "react-router-dom"
 
 function createData(name, calories, fat, carbs, protein) {
   return {
@@ -259,7 +260,7 @@ export default function EnhancedTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [employers, setEmployers] = React.useState([]);
   const [myselected, setMySelected] = React.useState('');
-
+  let navigate = useNavigate();
   const handleMySelect = (id) => {
     if (id == myselected) {
       setMySelected("");
@@ -273,7 +274,7 @@ export default function EnhancedTable() {
     setMySelected("");
   }
   const onUpdate = (id) => {
-    console.log("Update" + id)
+    navigate(`../update_employer/${id}`)
   }
   useEffect(() => {
     axios.get(process.env.REACT_APP_HOST + "api/employers/get")

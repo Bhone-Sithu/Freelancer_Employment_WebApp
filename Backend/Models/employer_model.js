@@ -7,7 +7,7 @@ const Employer_schema = mongoose.Schema({
         type:String,
     },
     phone:{
-        type:Number,
+        type:String,
     },
     name:{
         type:String
@@ -35,6 +35,9 @@ const Employer_schema = mongoose.Schema({
     },
     currency:{
         type:Number
+    },
+    created_date:{
+        type:Date
     }
 })
 module.exports = mongoose.models.employer || mongoose.model("Employer",Employer_schema)

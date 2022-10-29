@@ -50,7 +50,8 @@ export default function Post_Project() {
     }
     return (
         <ThemeProvider theme={theme}>
-            <Container component="main" maxWidth="md">
+            <div>
+            <Container component="main" maxWidth="md" >
                 <CssBaseline />
                 <Box
                     sx={{
@@ -60,9 +61,8 @@ export default function Post_Project() {
                         alignItems: 'center',
                     }}
                 >
-                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                        <LockOutlinedIcon />
-                    </Avatar>
+                    <img src='Lancer_logo.png' width={200} height={200} style={{ borderRadius: "50%" }} />
+                    <br></br>
                     <Typography component="h1" variant="h5">
                         Post Project
                     </Typography>
@@ -107,7 +107,7 @@ export default function Post_Project() {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <DesktopDatePicker
-                                    
+
                                     label="Project Deadline"
                                     inputFormat="DD/MM/YYYY"
                                     value={selectedDate}
@@ -182,13 +182,14 @@ export default function Post_Project() {
                             type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
+                            sx={{ mt: 3, mb: 2,backgroundColor:"#8f78ff" }}
                         >
                             Send Post Request
                         </Button>
                     </Box>
                 </Box>
             </Container>
+            </div>
         </ThemeProvider>
     );
 }

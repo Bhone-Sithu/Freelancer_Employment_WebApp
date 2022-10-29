@@ -7,7 +7,7 @@ const freelancer_schema = mongoose.Schema({
         type:String,
     },
     phone:{
-        type:Number,
+        type:String,
     },
     name:{
         type:String
@@ -32,6 +32,12 @@ const freelancer_schema = mongoose.Schema({
     },
     currency:{
         type:Number
+    },
+    invitations:{
+        type:Array
+    },
+    created_date:{
+        type:Date
     }
 })
 module.exports = mongoose.model("freelancer",freelancer_schema)

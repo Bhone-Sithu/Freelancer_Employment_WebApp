@@ -26,7 +26,15 @@ import Unapproved_Freelancer from "../Components/UI/unapproved_freelancer";
 import Freelancer_List from "../Components/UI/freelancer_list";
 import Project_List from "../Components/UI/project_list";
 import Unapproved_Project from "../Components/UI/unapproved_project";
+import Update_Employer from "../Components/UI/update_employer";
 import { BrowserRouter as Router, Routes, Route, Link, Switch } from "react-router-dom";
+import Payment from "../Pages/payment";
+import Dashboard from '../Components/UI/admin_dashboard';
+import BadgeIcon from '@mui/icons-material/Badge';
+import GroupIcon from '@mui/icons-material/Group';
+import CloseIcon from '@mui/icons-material/Close';
+import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
+import PaidIcon from '@mui/icons-material/Paid';
 
 const drawerWidth = 340;
 
@@ -81,12 +89,12 @@ export default function Admin_Dashboard() {
     const toggleDrawer = () => {
         setOpen(!open);
     };
-
+    
     return (
         <ThemeProvider theme={mdTheme}>
-            <Box sx={{ display: 'flex' }}>
+            <Box sx={{ display: 'flex' , backgroundColor:"#c7fdff" }}>
                 <CssBaseline />
-                <AppBar position="absolute" open={open}>
+                <AppBar position="absolute" open={open} sx={{ backgroundColor: "#8f78ff"}}  >
                     <Toolbar
                         sx={{
                             pr: '24px', // keep right padding when drawer closed
@@ -120,94 +128,131 @@ export default function Admin_Dashboard() {
                         </IconButton>
                     </Toolbar>
                 </AppBar>
-                <Drawer variant="permanent" open={open}>
-                    <Toolbar
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                            px: [1],
-                        }}
+                <Drawer variant="permanent" open={open} sx={{ backgroundColor: "#8f78ff" }}>
+                    <div style={{ backgroundColor: "#8f78ff", height: "100%" }}
                     >
-                        <IconButton onClick={toggleDrawer}>
-                            <ChevronLeftIcon />
-                        </IconButton>
-                    </Toolbar>
-                    <Divider />
-                    <List component="nav">
-                        <Link to="/admin_dashboard">
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <DashboardIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Dashboard" />
-                            </ListItemButton>
-                        </Link>
-                        <ListSubheader component="div" inset>
-                            Account Management
-                        </ListSubheader>
-                        <Link to="/admin_dashboard/employer_List ">
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <DashboardIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Employer_List" />
-                            </ListItemButton>
-                        </Link>
+                        <Toolbar
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'flex-end',
+                                px: [1],
+                            }}
+                        >
+                            <IconButton onClick={toggleDrawer}>
+                                <ChevronLeftIcon sx={{ textDecoration: "none", color: "white" }} />
+                            </IconButton>
+                        </Toolbar>
+                        <Divider />
+                        <List component="nav" >
+                            <Link to="/admin_dashboard" sx={{ textDecoration: "none", color: "white" }}>
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <DashboardIcon sx={{ textDecoration: "none", color: "white" }} />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Dashboard" color='white' sx={{ textDecoration: "none", color: "white" }} />
+                                </ListItemButton>
+                            </Link>
+                            <Divider />
+                            <ListSubheader component="div" inset sx={{ backgroundColor: "#8f78ff", color: "#7cfaff" }}>
+                                Account Management
+                            </ListSubheader>
+                            <Link to="/admin_dashboard/employer_List " sx={{ textDecoration: "none", color: "white" }}>
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <BadgeIcon sx={{ textDecoration: "none", color: "white" }} />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Employer_List" sx={{ textDecoration: "none", color: "white" }}/>
+                                </ListItemButton>
+                            </Link>
 
-                        <Link to="/admin_dashboard/freelancer_List ">
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <DashboardIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Freelancer_List" />
-                            </ListItemButton>
-                        </Link>
+                            <Link to="/admin_dashboard/freelancer_List " sx={{ textDecoration: "none", color: "white" }}>
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <GroupIcon sx={{ textDecoration: "none", color: "white" }} />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Freelancer_List" sx={{ textDecoration: "none", color: "white" }}/>
+                                </ListItemButton>
+                            </Link>
 
-                        <Link to="/admin_dashboard/unapproved_employers ">
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <DashboardIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Unapproved Employer" />
-                            </ListItemButton>
-                        </Link>
-                        <Link to="/admin_dashboard/unapproved_freelancers ">
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <DashboardIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Unapproved Freelancers" />
-                            </ListItemButton>
-                        </Link>
-                        <ListSubheader component="div" inset>
-                            Project Data Management
-                        </ListSubheader>
-                        <Link to="/admin_dashboard/unapproved_projects ">
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <DashboardIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Unapproved Projects" />
-                            </ListItemButton>
-                        </Link>
-                        <Link to="/admin_dashboard/project_list ">
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <DashboardIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Project List" />
-                            </ListItemButton>
-                        </Link>
-                    </List>
+                            <Link to="/admin_dashboard/unapproved_employers " sx={{ textDecoration: "none", color: "white" }}>
+                                <ListItemButton>
+
+                                    <ListItemIcon>
+                                        <Box display="grid" gridTemplateColumns="repeat(2, 1fr)">
+                                            <Box gridColumn="1/1" gridRow="1/1">
+                                                <BadgeIcon sx={{ textDecoration: "none", color: "white" }} />
+                                            </Box>
+                                            <Box gridColumn="1/1" gridRow="1/1">
+                                                <CloseIcon sx={{ textDecoration: "none", color: "red" }} ></CloseIcon>
+                                            </Box>
+                                        </Box>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Unapproved Employer" sx={{ textDecoration: "none", color: "white" }}/>
+                                </ListItemButton>
+                            </Link>
+                            <Link to="/admin_dashboard/unapproved_freelancers " sx={{ textDecoration: "none", color: "white" }}>
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <Box display="grid" gridTemplateColumns="repeat(2, 1fr)">
+                                            <Box gridColumn="1/1" gridRow="1/1">
+                                                <GroupIcon sx={{ textDecoration: "none", color: "white" }} />
+                                            </Box>
+                                            <Box gridColumn="1/1" gridRow="1/1">
+                                                <CloseIcon sx={{ textDecoration: "none", color: "red" }} ></CloseIcon>
+                                            </Box>
+                                        </Box>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Unapproved Freelancers" sx={{ textDecoration: "none", color: "white" }}/>
+                                </ListItemButton>
+                            </Link>
+                            <Divider />
+                            <ListSubheader component="div" inset sx={{ backgroundColor: "#8f78ff", color: "#7cfaff" }}>
+                                Project Data Management
+                            </ListSubheader>
+                            <Link to="/admin_dashboard/unapproved_projects " sx={{ textDecoration: "none", color: "white" }}>
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                    <Box display="grid" gridTemplateColumns="repeat(2, 1fr)">
+                                            <Box gridColumn="1/1" gridRow="1/1">
+                                                <FolderSpecialIcon sx={{ textDecoration: "none", color: "white" }} />
+                                            </Box>
+                                            <Box gridColumn="1/1" gridRow="1/1">
+                                                <CloseIcon sx={{ textDecoration: "none", color: "red" }} ></CloseIcon>
+                                            </Box>
+                                        </Box>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Unapproved Projects" sx={{ textDecoration: "none", color: "white" }}/>
+                                </ListItemButton>
+                            </Link>
+                            <Link to="/admin_dashboard/project_list " sx={{ textDecoration: "none", color: "white" }}>
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <FolderSpecialIcon sx={{ textDecoration: "none", color: "white" }} />
+
+                                    </ListItemIcon>
+                                    <ListItemText primary="Project List" sx={{ textDecoration: "none", color: "white" }}/>
+                                </ListItemButton>
+                            </Link>
+                            <Divider />
+                            <ListSubheader component="div" inset sx={{ backgroundColor: "#8f78ff", color: "#7cfaff" }}>
+                                Payment
+                            </ListSubheader>
+                            <Link to={"/admin_dashboard/payment/" + localStorage.getItem("admin_id")} sx={{ textDecoration: "none", color: "white" }}>
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <PaidIcon sx={{ textDecoration: "none", color: "white" }} />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Payment" sx={{ textDecoration: "none", color: "white" }}/>
+                                </ListItemButton>
+                            </Link>
+                        </List>
+                    </div>
                 </Drawer>
                 <Box
                     component="main"
                     sx={{
-                        backgroundColor: (theme) =>
-                            theme.palette.mode === 'light'
-                                ? theme.palette.grey[100]
-                                : theme.palette.grey[900],
+                        backgroundColor:"#c7fdff",
                         flexGrow: 1,
                         height: '100vh',
                         overflow: 'auto',
@@ -217,13 +262,15 @@ export default function Admin_Dashboard() {
                     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                         <Grid container spacing={3}>
                             <Routes>
-                                <Route path='' element={<p>dashboard</p>} />
+                                <Route path='' element={<Dashboard/>} />
                                 <Route path='employer_list' element={<Employer_List />} />
+                                <Route path='update_employer/:id' element={<Update_Employer />} />
                                 <Route path='unapproved_employers' element={<Unapproved_Employer />} />
                                 <Route path='unapproved_freelancers' element={<Unapproved_Freelancer />} />
                                 <Route path='unapproved_projects' element={< Unapproved_Project />} />
                                 <Route path='freelancer_list' element={<Freelancer_List />} />
                                 <Route path='project_list' element={<Project_List />} />
+                                <Route path='payment/:id'element={<Payment />} />
                                 
                             </Routes>
 

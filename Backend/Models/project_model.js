@@ -6,6 +6,9 @@ const project_schema = mongoose.Schema({
     freelancer_id:{
         type: String,
     },
+    admin_id:{
+        type:String
+    },
     title: {
         type:String,
     },
@@ -35,6 +38,9 @@ const project_schema = mongoose.Schema({
     },
     is_approved:{
         type:Boolean
+    },
+    created_date:{
+        type:Date
     }
 })
 module.exports = mongoose.model("project",project_schema)

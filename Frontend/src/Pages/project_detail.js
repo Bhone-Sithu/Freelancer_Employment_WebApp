@@ -31,6 +31,7 @@ function FeaturedPost() {
     let navigate = useNavigate();
     const [freelancers, setFreelancers] = useState([]);
     const [freelancer, setFreelancer] = useState({});
+    const [employer, setEmployer] = useState({});
     // let freelancers = []
     const freelancer_id = localStorage.getItem("freelancer_id");
     useEffect(() => {
@@ -41,6 +42,13 @@ function FeaturedPost() {
                     axios.get(process.env.REACT_APP_HOST + `api/freelancers/get/${response.data.freelancer_id}`)
                         .then((res) => {
                             setFreelancer(res.data);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        })
+                    axios.get(process.env.REACT_APP_HOST + `api/employers/get/${response.data.employer_id}`)
+                        .then((res) => {
+                            setEmployer(res.data);
                         })
                         .catch((error) => {
                             console.log(error);
@@ -70,17 +78,20 @@ function FeaturedPost() {
                 console.log(error);
             })
     })
-
+    const invite = async () => {
+        localStorage.removeItem("project_id")
+        localStorage.setItem("invite_id", id)
+        navigate(`../../project_feed/freelancers_list/`)
+    }
     const apply = async () => {
         const status = await apply_project(id, freelancer_id);
         console.log(status);
         setStatus(status);
     }
     const accept = async (fid) => {
+        localStorage.removeItem("invite_id")
         localStorage.setItem("project_id", id)
         navigate(`/freelancer_view/${fid}`)
-        console.log(status);
-        setStatus(status);
     }
     return (
         <Container component="main" maxWidth="lg">
@@ -118,11 +129,15 @@ function FeaturedPost() {
                                     The post is expired in {project.expire_date} days.
                                 </Typography>
                                 <Typography variant="body1" paragraph>
-                                    Employer id {project.employer_id}
+                                    Employer name : {employer.name}
                                 </Typography>
                                 {project.freelancer_id != "" ?
                                     <Typography variant="body1" paragraph>
                                         Freelancer name {freelancer.name}
+                                    </Typography> : null}
+                                {localStorage.getItem("employer_id")?
+                                    <Typography variant="body1" paragraph>
+                                        Admin id {project.admin_id}
                                     </Typography> : null}
 
                             </CardContent>
@@ -180,6 +195,32 @@ function FeaturedPost() {
                     </Grid>
                 </Grid>
             </Box>
+            {localStorage.getItem("employer_id") == project.employer_id ?
+                project.freelancer_id == "" ? project.is_approved ?
+                    <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
+                        <Button
+                            fullWidth
+                            onClick={() => invite(project._id)}
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Invite a Freelancer
+                        </Button>
+                    </Grid> : null : null
+                : null}
+            {
+                project.dashboard_id !== "" ?
+                    <Grid item xs={12} sx={{ mt: 2, mb: 2 }}>
+                        <Button
+                            fullWidth
+                            onClick={() => navigate(`../../project_dashboard/${project._id}`)}
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Go to Project Dashboard
+                        </Button>
+                    </Grid> : null
+            }
             {localStorage.getItem("freelancer_id") ?
                 status == "200" ?
                     <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>

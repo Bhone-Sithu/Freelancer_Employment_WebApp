@@ -1,41 +1,45 @@
 const Project = require('../Models/project_model');
+const Freelancer = require('../Models/freelancer_model');
+const { faker } = require('@faker-js/faker');
 const post_project = async (req, res) => {
-    // const project = {
-    //     employer_id: "62ecacb4ad55966fa4f37af5",
-    //     freelancer_id: "",
-    //     title: req.body.title,
-    //     description: req.body.description,
-    //     skillset: req.body.skillset,
-    //     language:req.body.language,
-    //     candidate: [],
-    //     payment: req.body.payment,
-    //     expire_date: 15,
-    //     deadline: req.body.deadline,
-    //     dashboard_id: "",
-    //     is_approved:false
-    // }
-    for (let index = 1; index <= 50; index++) {
-        const project = {
-            employer_id: "62ecacb4ad55966fa4f37af5",
-            freelancer_id: "",
-            title: `Project ${index}`,
-            description: `Project ${index} Project ${index} Project ${index} Project ${index} Project ${index} Project ${index} Project ${index} Project ${index} Project ${index}`,
-            skillset: ["Business", "PHP", "JavaScript"],
-            language: ["Japanese", "English", "Burmese"],
-            candidate: ["62e29f63ecd208dbea756d7c", "62edda9f96515e298eefa266", "6310cfe76f3f8b7ad5a73997", "6310cf4604c2b6a750b70701", "6310d1a76f3f8b7ad5a744e1"],
-            payment: 400,
-            expire_date: 15,
-            deadline: "2023-09-24T17:30:00.000Z",
-            dashboard_id: "",
-            is_approved: false
-        }
-        const posted = await Project.create(project);
+    const project = {
+        employer_id: req.body.employer_id,
+        freelancer_id: "",
+        admin_id:"62e35dca871c083794990585",
+        title: req.body.title,
+        description: req.body.description,
+        skillset: req.body.skillset,
+        language:req.body.language,
+        candidate: [],
+        payment: req.body.payment,
+        expire_date: 15,
+        deadline: req.body.deadline,
+        dashboard_id: "",
+        is_approved:false,
+        created_date:Date.now()
     }
-    
+    // for (let index = 1; index <= 50; index++) {
+    //     const project = {
+    //         employer_id: "62ecacb4ad55966fa4f37af5",
+    //         freelancer_id: "",
+    //         title: `Project ${index}`,
+    //         description: `Project ${index} Project ${index} Project ${index} Project ${index} Project ${index} Project ${index} Project ${index} Project ${index} Project ${index}`,
+    //         skillset: ["Business", "PHP", "JavaScript"],
+    //         language: ["Japanese", "English", "Burmese"],
+    //         candidate: ["62e29f63ecd208dbea756d7c", "62edda9f96515e298eefa266", "6310cfe76f3f8b7ad5a73997", "6310cf4604c2b6a750b70701", "6310d1a76f3f8b7ad5a744e1"],
+    //         payment: 400,
+    //         expire_date: 15,
+    //         deadline: "2023-09-24T17:30:00.000Z",
+    //         dashboard_id: "",
+    //         is_approved: false
+    //     }
+    //     const posted = await Project.create(project);
+    // }
+    const posted = await Project.create(project);
     res.status(201).json({ messag: "Your project post has been requested" });
 }
 const get_projects = async (req, res) => {
-    const projects = await Project.find({});
+    const projects = await Project.find({is_approved:true});
     res.status(200).json(projects)
 
 }
@@ -48,22 +52,13 @@ const get_project = async (req, res) => {
 }
 const update_project = async (req, res) => {
     const project = {
-        email: req.body.email,
-        password: req.body.password,
-        name: req.body.name,
-        // phone: 0,
-        // country: "String",
-        // company_name: "String",
-        // company_size: 0,
-        // is_approved: false,
-        // company_address: "String",
-        // currency: 0
+        dashboard_id:req.body.dashboard_id
     }
-    const updated = await project.findByIdAndUpdate(req.params.id, project, { new: true });
+    const updated = await Project.findByIdAndUpdate(req.params.id, project, { new: true });
     res.status(200).json(updated);
 }
 const delete_project = async (req, res) => {
-    const deleted = await project.findByIdAndDelete(req.params.id);
+    const deleted = await Project.findByIdAndDelete(req.params.id);
     // const deleted = await project.deleteMany({email:"hi2@gmail.com"})
     res.status(200).json(deleted);
 }
@@ -79,6 +74,14 @@ const accept_freelancer = async (req, res) => {
     const updated = await Project.findByIdAndUpdate(req.params.id, { freelancer_id: req.body.freelancer_id }, { new: true })
     res.status(200).json(updated);
 }
+const invite_freelancer = async (req, res) => {
+    const freelancer = await Freelancer.findById(req.params.id);
+    const original_invitations = freelancer.invitations;
+    original_invitations.push(`${req.body.invite_id}`);
+    const new_invitations = original_invitations;
+    const updated = await Freelancer.findByIdAndUpdate(req.params.id, { invitations: new_invitations }, { new: true })
+    res.status(200).json(updated);
+}
 const employer_get_project = async (req, res) => {
     const projects = await Project.find({employer_id:req.params.id})
     res.status(200).json(projects);
@@ -91,5 +94,6 @@ module.exports = {
     delete_project,
     apply_project,
     accept_freelancer,
-    employer_get_project
+    employer_get_project,
+    invite_freelancer
 }

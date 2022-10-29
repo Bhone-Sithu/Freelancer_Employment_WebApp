@@ -7,6 +7,8 @@ const {approve_account,
     register_admin,
     get_unapproved_employers,
     get_unapproved_freelancers,
+    reject_account,
+    reject_project,
     get_unapproved_projects} = require('../Controllers/admin_controller')
 router.get('/get',get_admins);
 router.post('/register',register_admin);
@@ -16,5 +18,7 @@ router.get('/get_unapproved_freelancers',get_unapproved_freelancers);
 router.get('/get_unapproved_projects',get_unapproved_projects);
 router.put('/approve_account/:id',approve_account);
 router.put('/approve_project/:id',approve_project);
+router.put('/reject_account/:id',reject_account);
+router.put('/reject_project/:id',reject_project);
 
 module.exports = router;

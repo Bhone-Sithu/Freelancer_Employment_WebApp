@@ -25,7 +25,7 @@ import axios from "axios";
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
 import {employer_delete} from '../Function/employer_function';
-import {approve} from '../Function/admin_function';
+import {approve,reject_account} from '../Function/admin_function';
 
 function createData(name, calories, fat, carbs, protein) {
   return {
@@ -269,7 +269,7 @@ export default function EnhancedTable() {
       setMySelected(id);
   }
   const onDelete = async(id) => {
-    const status = await employer_delete(id);
+    const status = await reject_account(id);
     setMySelected("");
     // setEmployers(employers);
   }

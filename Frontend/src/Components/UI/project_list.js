@@ -25,7 +25,9 @@ import axios from "axios";
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
 import { freelancer_delete } from '../Function/freelancer_function';
-import { approve } from '../Function/admin_function';
+import { approve, start } from '../Function/admin_function';
+import { Grid } from '@mui/material';
+import { project_delete } from '../Function/project_function';
 
 function createData(name, calories, fat, carbs, protein) {
     return {
@@ -114,8 +116,8 @@ const headCells = [
         disablePadding: true,
         label: 'Candidate'
     },
-    
-    
+
+
     {
         id: 'skillset',
         numeric: false,
@@ -151,7 +153,7 @@ const headCells = [
         numeric: false,
         disablePadding: true,
         label: 'Dashboard_id'
-    },  
+    },
 
 ];
 
@@ -201,7 +203,7 @@ EnhancedTableHead.propTypes = {
 };
 
 const EnhancedTableToolbar = (props) => {
-    const { numSelected, onDelete, onUpdate, selected_id } = props;
+    const { numSelected, onDelete, onUpdate, selected_id, onStart } = props;
 
     return (
         <Toolbar
@@ -236,16 +238,33 @@ const EnhancedTableToolbar = (props) => {
 
             {numSelected > 0 ? (
                 <>
-                    <Tooltip title="Reject">
-                        <Button variant="outlined" startIcon={<DeleteIcon />} onClick={() => onDelete(selected_id)}>
-                            Reject
-                        </Button>
-                    </Tooltip>
-                    <Tooltip title="Approve">
-                        <Button variant="outlined" startIcon={<EditIcon />} onClick={() => onUpdate(selected_id)}>
-                            Approve
-                        </Button>
-                    </Tooltip>
+                    <Grid container  sx={{justifyContent:'space-between'}}>
+                        <Grid item >
+                            <Tooltip title="Delete">
+                                <Button variant="outlined" startIcon={<DeleteIcon />} onClick={() => onDelete(selected_id)}>
+                                    Delete
+                                </Button>
+                            </Tooltip>
+                        </Grid>
+                        <Grid item >
+                            <Tooltip title="Approve">
+                                <Button variant="outlined" startIcon={<EditIcon />} onClick={() => onUpdate(selected_id)}>
+                                    Edit
+                                </Button>
+                            </Tooltip>
+                        </Grid>
+                        <Grid item >
+                            <Tooltip title="Start">
+                                <Button variant="outlined" startIcon={<EditIcon />} onClick={() => onStart(selected_id)}>
+                                    Start
+                                </Button>
+                            </Tooltip>
+                        </Grid>
+
+
+
+                    </Grid>
+
                 </>
 
             ) : (
@@ -277,12 +296,16 @@ export default function EnhancedTable() {
             setMySelected(id);
     }
     const onDelete = async (id) => {
-        const status = await freelancer_delete(id);
+        const status = await project_delete(id);
         setMySelected("");
         // setEmployers(employers);
     }
     const onUpdate = async (id) => {
         const status = await approve(id);
+        setMySelected("");
+    }
+    const onStart = async(id)=>{
+        const status = await start(id);
         setMySelected("");
     }
     useEffect(() => {
@@ -353,7 +376,7 @@ export default function EnhancedTable() {
     return (
         <Box sx={{ width: '100%', ml: 1.5 }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar numSelected={myselected.length} onDelete={onDelete} onUpdate={onUpdate} selected_id={myselected} />
+                <EnhancedTableToolbar numSelected={myselected.length} onDelete={onDelete} onUpdate={onUpdate} onStart={onStart} selected_id={myselected} />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750, ml: 2 }}
@@ -391,7 +414,7 @@ export default function EnhancedTable() {
                                             selected={isItemSelected}
                                         >
 
-                                        
+
                                             <TableCell align="left">{row.employer_id}</TableCell>
                                             <TableCell align="left">{row.freelancer_id}</TableCell>
                                             <TableCell align="left">{row.title}</TableCell>

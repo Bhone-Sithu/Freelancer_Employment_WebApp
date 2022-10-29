@@ -11,6 +11,7 @@ import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -20,11 +21,18 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Project_Card from "../Components/UI/project_card";
+import Freelancer_Card from "../Components/UI/freelancer_card";
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import Project_Detail from "./project_detail";
 import { Link as RouterLink, Router, Routes, Route } from "react-router-dom"
 import Link from '@mui/material/Link';
+import NavBar from '../Components/UI/nav'
+import BadgeIcon from '@mui/icons-material/Badge';
+import GroupIcon from '@mui/icons-material/Group';
+import CloseIcon from '@mui/icons-material/Close';
+import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
+import PaidIcon from '@mui/icons-material/Paid';
 
 const drawerWidth = 340;
 
@@ -78,7 +86,10 @@ export default function Admin_Dashboard() {
     const [open, setOpen] = React.useState(true);
     const [projects, setProjects] = React.useState([]);
     const [my_projects, setMyProjects] = React.useState([]);
-
+    const [freelancers, setFreelancers] = React.useState([]);
+    const [freelancer, setFreelancer] = React.useState({ invitations: [] });
+    const [invitation, setInvitation] = React.useState([]);
+    const freelancer_id = localStorage.getItem("freelancer_id");
     const toggleDrawer = () => {
         setOpen(!open);
     };
@@ -90,6 +101,7 @@ export default function Admin_Dashboard() {
             .catch((error) => {
                 console.log(error);
             })
+
         if (localStorage.getItem("employer_id")) {
             axios.get(process.env.REACT_APP_HOST + `api/projects/employer_get_project/${localStorage.getItem("employer_id")}`)
                 .then((response) => {
@@ -98,14 +110,56 @@ export default function Admin_Dashboard() {
                 .catch((error) => {
                     console.log(error);
                 })
+            axios.get(process.env.REACT_APP_HOST + `api/freelancers/get`)
+                .then((response) => {
+                    setFreelancers(response.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+        }
+        if (localStorage.getItem("freelancer_id")) {
+            axios.get(process.env.REACT_APP_HOST + `api/freelancers/get/${freelancer_id}`)
+                .then((response) => {
+                    setFreelancer(response.data);
+
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
         }
 
+    }, [])
+    freelancer.invitations.map((project_id) => {
+        axios.get(process.env.REACT_APP_HOST + `api/projects/get/${project_id}`)
+            .then((response) => {
+                setInvitation((prev) => [
+                    ...prev,
+                    response.data
+                ])
+
+
+            })
     })
+    const effect_function = async () => {
+
+    }
+    // for (let index = 0; index < freelancer.invitations.length; index++) {
+    //     axios.get(process.env.REACT_APP_HOST + `api/projects/get/${freelancer.invitations[index]}`)
+    //     .then((response) => {
+    //         setInvitation((prev) => [
+    //             ...prev,
+    //             response.data
+    //         ])
+    //     })
+    // }
+
+
     return (
         <ThemeProvider theme={mdTheme}>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
-                <AppBar position="absolute" open={open}>
+                <AppBar position="absolute" open={open} sx={{ backgroundColor: "#8f78ff" }}>
                     <Toolbar
                         sx={{
                             pr: '24px', // keep right padding when drawer closed
@@ -123,58 +177,45 @@ export default function Admin_Dashboard() {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography
-                            component="h1"
-                            variant="h6"
-                            color="inherit"
-                            noWrap
-                            sx={{ flexGrow: 1 }}
-                        >
-                            Lancer Freelance
-                        </Typography>
-                        {localStorage.getItem("employer_id") ?
-                            <Link component={RouterLink} to="/project_feed/my_projects" color="inherit" underline="none">My Projects</Link>
-                            : null
-                        }
-
+                        <NavBar />
                     </Toolbar>
                 </AppBar>
-                <Drawer variant="permanent" open={open}>
-                    <Toolbar
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                            px: [1],
-                        }}
+                <Drawer variant="permanent" open={open} sx={{ backgroundColor: "#8f78ff" }}>
+                    <div style={{ backgroundColor: "#8f78ff", height: "100%" }}
                     >
-                        <IconButton onClick={toggleDrawer}>
-                            <ChevronLeftIcon />
-                        </IconButton>
-                    </Toolbar>
-                    <Divider />
-                    Filter Functions Coming Soon
+                        <Toolbar
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'flex-end',
+                                px: [1],
+                            }}
+                        >
+                            <IconButton onClick={toggleDrawer}>
+                                <ChevronLeftIcon sx={{ textDecoration: "none", color: "white" }} />
+                            </IconButton>
+                        </Toolbar>
+                        <Divider />
+
+                    </div>
                 </Drawer>
                 <Box
                     component="main"
                     sx={{
-                        backgroundColor: (theme) =>
-                            theme.palette.mode === 'light'
-                                ? theme.palette.grey[100]
-                                : theme.palette.grey[900],
+                        backgroundColor: "#c7fdff",
                         flexGrow: 1,
                         height: '100vh',
                         overflow: 'auto',
                     }}
                 >
                     <Toolbar />
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+                    <Container maxWidth="lg" sx={{ mt: 8, mb: 4 }}>
 
                         <Routes>
                             <Route path="my_projects" element={
                                 <Grid container spacing={3}>
                                     {
-                                        my_projects.map((project) => <Project_Card key={project.id} post={project} />)
+                                        my_projects.map((project) => <Project_Card key={project._id} post={project} />)
                                     }
 
                                 </Grid>
@@ -182,8 +223,33 @@ export default function Admin_Dashboard() {
                             <Route path="" element={
                                 <Grid container spacing={3}>
                                     {
-                                        projects.map((project) => <Project_Card key={project.id} post={project} />)
+                                        projects.map((project) => <Project_Card key={project._id} post={project} />)
                                     }
+
+                                </Grid>
+                            } />
+                            <Route path="freelancers_list" element={
+                                <Grid container spacing={3}>
+                                    {
+                                        freelancers.map((project) => <Freelancer_Card key={project._id} post={project} />)
+                                    }
+
+                                </Grid>
+                            } />
+                            <Route path="project_invitations" element={
+                                <Grid container spacing={3}>
+                                    {
+                                        freelancer.invitations.map((project, i) => invitation[i] ?
+                                            <Project_Card key={invitation[i]._id} post={invitation[i]} />
+                                            :
+                                            null)
+                                    }
+
+                                </Grid>
+                            } />
+                            <Route path="payment" element={
+                                <Grid container spacing={3}>
+
 
                                 </Grid>
                             } />

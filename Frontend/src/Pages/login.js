@@ -3,7 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -19,7 +18,7 @@ import Chip from '@mui/material/Chip';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import ListSubheader from '@mui/material/ListSubheader';
 import { login } from '../Components/Function/login';
-import {useNavigate}from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 
 const theme = createTheme();
@@ -35,17 +34,22 @@ export default function Login() {
         setStatus(res.status);
         setMessage(res.message);
         localStorage.clear();
-        if(res.role == "admin"){
-            localStorage.setItem("admin_id",res.id);
-            navigate("/admin_dashboard")
+        if (res.status == 200) {
+            if (res.role == "admin") {
+                localStorage.setItem("admin_id", res.id);
+                setTimeout(() => { navigate("/admin_dashboard") }, 5000);
+            }
+            if (res.role == "employer") {
+                localStorage.setItem("employer_id", res.id);
+                setTimeout(() => { navigate("/project_feed") }, 5000);
+            }
+            if (res.role == "freelancer") {
+                localStorage.setItem("freelancer_id", res.id)
+                setTimeout(() => { navigate("/project_feed") }, 5000);
+
+            }
         }
-        if(res.role == "employer"){
-            localStorage.setItem("employer_id",res.id);
-            navigate("/post_project")
-        }
-        if(res.role == "freelancer"){
-            localStorage.setItem("freelancer_id",res.id)
-        }
+
 
     };
     return (
@@ -60,25 +64,26 @@ export default function Login() {
                         alignItems: 'center',
                     }}
                 >
-                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
+                    
+                        <img src='Lancer_logo.png' width={200} height={200} style={{borderRadius:"50%"}}/>
+                    <br></br>
+                    <Typography component="h1" variant="h5" >
                         Login
                     </Typography>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-                        <Grid container spacing={2}>
-                            {status == 200 && 
-                            <Grid item xs={12}>
-                                 <Alert severity="success"> {message} Currently, This is all functions for Freelancer/Employer. <br /> The Updates are coming soon.</Alert>
-                            </Grid>}
+                        <Grid container spacing={2} >
+                            {status == 200 &&
+                                <Grid item xs={12}>
+                                    <Alert severity="success"> {message}</Alert>
+                                </Grid>}
                             {status == 400 &&
-                            <Grid item xs={12}>
-                                 <Alert severity="error"> Login failed. Please Provide valid email or password</Alert>
-                            </Grid>
+                                <Grid item xs={12}>
+                                    <Alert severity="error"> {message}</Alert>
+                                </Grid>
                             }
-                            <Grid item xs={12}>
+                            
                                 <TextField
+                                
                                     required
                                     fullWidth
                                     id="email"
@@ -86,8 +91,10 @@ export default function Login() {
                                     name="email"
                                     autoComplete="email"
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
+                            
+                            <br/>
+                            <br/>
+                            <br/>
                                 <TextField
                                     required
                                     fullWidth
@@ -97,20 +104,25 @@ export default function Login() {
                                     id="password"
                                     autoComplete="new-password"
                                 />
-                            </Grid>
                             <Button
                                 type="submit"
                                 fullWidth
                                 variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
+                                
+                                sx={{ mt: 3, mb: 2,backgroundColor:"#8f78ff" }}
                             >
                                 Log in
                             </Button>
                         </Grid>
-                        <Grid container justifyContent="flex-end">
+                        <Grid container justifyContent="space-between">
                             <Grid item>
-                                <Link href="#" variant="body2">
-                                    Do not have an account? Register Now.
+                                <Link to="/freelancer_register">
+                                    Register as a Freelancer.
+                                </Link>
+                            </Grid>
+                            <Grid item>
+                                <Link to="/employer_register">
+                                    Register as a Employer.
                                 </Link>
                             </Grid>
                         </Grid>

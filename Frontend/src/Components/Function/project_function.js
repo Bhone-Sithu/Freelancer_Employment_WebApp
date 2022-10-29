@@ -9,6 +9,7 @@ const post_project = async (data) =>{
       deadline: data.get('deadline'),
       language: data.get('language').split(','),
       skillset: data.get('skillset').split(','),
+      employer_id: localStorage.getItem("employer_id")
     };
     const res = await axios.post(`${process.env.REACT_APP_HOST}api/projects/post`, project);
     return res.status;
@@ -17,7 +18,7 @@ const projects_get = () => {
     console.log("hi");
 }
 const project_delete = async (id) => {
-  const res = await axios.delete(`${process.env.REACT_APP_HOST}api/projects/delete`, id);
+  const res = await axios.delete(`${process.env.REACT_APP_HOST}api/projects/delete/${id}` );
   return res.status;
 }
 const apply_project = async (project_id, freelancer_id) => {
