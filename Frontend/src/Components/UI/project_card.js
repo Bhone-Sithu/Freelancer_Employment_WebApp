@@ -10,11 +10,14 @@ import CardMedia from '@mui/material/CardMedia';
 import { Link } from "react-router-dom";
 
 function FeaturedPost(props) {
-    const { post } = props;
+    const { post,from } = props;
+    let link = `/project_detail/${post._id}`
+    if(from == "profile") link = `/project_dashboard/${post._id}`
 
     return (
         <Grid item xs={12} >
-            <Link to={`/project_detail/${post._id}`} >
+            <Link to = {link}>
+            
                 <CardActionArea sx={{borderRadius:"15px"}}>
                     <Card sx={{ display: 'flex',borderRadius:"10px"}}>
                         <CardContent sx={{ flex: 1 }}>

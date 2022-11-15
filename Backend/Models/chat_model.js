@@ -12,6 +12,12 @@ const Chat_schema = mongoose.Schema({
     content : {
         type:String,
     },
+    file_path : {
+        type:String,
+    },
+    file_type : {
+        type:String,
+    },
     timestamp : {
         type:String,
     },

@@ -1,9 +1,10 @@
 import { Grid } from "@mui/material";
 import { Link as RouterLink, Router, Routes, Route } from "react-router-dom";
 import Link from '@mui/material/Link';
+import Profile_Nav from './profile_nav'
 const Nav = () => {
     return (
-        <Grid container sx={{ backgroundColor: "#8f78ff", p: "10" }}>
+        <Grid container sx={{ backgroundColor: "#8f78ff" }}>
 
             {/* <Grid item xs={8}><Typography
                                 component="h1"
@@ -14,7 +15,7 @@ const Nav = () => {
                             >
                                 Lancer Freelance
                             </Typography></Grid> */}
-            <Grid item xs={6}>
+            <Grid item xs={5}>
                 <RouterLink to="/project_feed">
                     <img src="../../Lancer_logo.png" width={75} height={75} />
                 </RouterLink>
@@ -22,8 +23,8 @@ const Nav = () => {
             </Grid>
 
             {localStorage.getItem("employer_id") ?
-                <Grid item sx={{ alignSelf: "center" }}>
-                    <Grid container spacing={10} >
+                <Grid item sx={{ alignSelf: "center" ,ml:0 }}>
+                    <Grid container spacing={10} sx={{ alignSelf: "center" ,ml:0 }} >
                         <Grid item > <Link component={RouterLink} to="/project_feed/my_projects" color="white" underline="none" sx={{ fontSize: "25" }}>My Projects</Link>
                         </Grid>
                         <Grid item > <Link component={RouterLink} to="..//post_project" color="white" underline="none" sx={{ fontSize: "25" }}>Post Projects</Link>
@@ -43,6 +44,9 @@ const Nav = () => {
                 </Grid>
                 : null
             }
+            <Grid item sx={{ alignSelf: "center" }}>
+                <Profile_Nav/>
+            </Grid>
         </Grid>
     )
 }

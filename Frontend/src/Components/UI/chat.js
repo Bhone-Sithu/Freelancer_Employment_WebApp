@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import Paper from '@mui/material/Paper'
-import { Box, Button, Grid, TextField, Typography } from '@mui/material'
+import { Box, Button, Grid, IconButton, TextField, Typography } from '@mui/material'
 import axios from 'axios'
 import { Container } from '@mui/system'
 import { useParams } from 'react-router-dom'
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import InsertDriveFile from '@mui/icons-material/InsertDriveFile'
 const Chat = (props) => {
     const { project } = props;
     const { id } = useParams();
-    console.log(id);
     const [message, setMessage] = useState(["", ""]);
     const [effect, setEffect] = useState({ hi: true })
-    const [text, setText] = useState("")
+    const [text, setText] = useState("");
+    const [file, setFile] = useState();
+    const [preview, setPreview] = useState("");
+    const [is_preview, setIsPreview] = useState(false);
     const user_id = localStorage.getItem("employer_id") ?? localStorage.getItem("freelancer_id")
     const receiver_id = (project.employer_id == user_id) ? project.freelancer_id : project.employer_id
     useEffect(() => {
@@ -21,7 +25,6 @@ const Chat = (props) => {
                     .then(res => {
 
                         setMessage(res.data)
-                        console.log(res.data)
                     })
                     .catch((error) => {
                         console.log(error);
@@ -30,17 +33,38 @@ const Chat = (props) => {
             .catch((error) => {
                 console.log(error);
             })
+        if (file) {
+            const file_reader = new FileReader();
+            file_reader.onload = () => {
+                setPreview(file_reader.result)
+            };
+            file_reader.readAsDataURL(file);
+            setIsPreview(file.name.match(/\.(jpeg|jpg|png)$/));
+        }
 
-    },[effect])
+
+    }, [effect, file])
     const send_message = async (event) => {
-        let res = await axios.post(process.env.REACT_APP_HOST + 'api/chats/send_message', {
-            project_id: project._id,
-            sender_id: user_id,
-            receiver_id,
-            content: text,
-        })
-        setEffect({hi:!(effect.hi)})
+        const form_data = new FormData();
+        form_data.append('project_id',project._id);
+        form_data.append('sender_id',user_id);
+        form_data.append('receiver_id',receiver_id);
+        form_data.append('file',file);
+        // let res = await axios.post(process.env.REACT_APP_HOST + 'api/chats/send_message', {
+        //     project_id: project._id,
+        //     sender_id: user_id,
+        //     receiver_id,
+        //     content: JSON.stringify(file),
+        // })
+        let res = await axios.post(process.env.REACT_APP_HOST + 'api/chats/send_file    ', form_data,{headers:{
+            'content-type': 'multipart/form-data'
+        }})
+        
+        setEffect({ hi: !(effect.hi) })
         setText("");
+    }
+    const handle_file = async (event) => {
+        setFile(event.target.files[0]);
     }
     return (
         <div style={{ backgroundColor: "#c7fdff" }}>
@@ -68,13 +92,28 @@ const Chat = (props) => {
             </div>
             <Paper elevation={10} sx={{ top: 'auto', bottom: 0, position: "sticky", py: 2, pl: 5, pr: 0, width: "100%", backgroundColor: "white" }}>
                 <Grid container justifyContent="space-between" sx={{ width: "100%" }}>
-                    <Grid item xs={10}><TextField id="standard-basic" fullWidth label="Send a message" variant="standard" onChange={(event) => { setText(event.target.value) }} value={text} /></Grid>
-                    <Grid item >
+                    
+                    {preview != "" ?
+                        is_preview ?
+                            <img src={preview} width="250" height="250" />
+                            : null
+                        :
+                        <Grid item xs={10}><TextField id="standard-basic" fullWidth label="Send a message" variant="standard" onChange={(event) => { setText(event.target.value) }} value={text} /></Grid>
+                    }
+
+                    <Grid item>
+
+                        <IconButton sx={{ mt: 2, color: "#8f78ff" }} size="large" variant="contained" component="label">
+
+                            <InsertDriveFile />
+
+                            <input type="file" onChange={handle_file} hidden />
+                        </IconButton>
                         <Button
                             type="button"
                             onClick={send_message}
                             variant="contained"
-                            sx={{ mx: 5, mt: 2 }}
+                            sx={{ mx: 5, mt: 2, backgroundColor: "#8f78ff" }}
                         >
                             Send
                         </Button>

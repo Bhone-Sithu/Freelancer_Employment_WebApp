@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require("path");
+const multer = require("multer");
 const dotenv = require('dotenv').config();
 const connectDB = require('./config/db');
 const cors = require('cors');
@@ -6,7 +8,7 @@ const port = process.env.port || 8000;
 const app = express();
 const run = require('./Controllers/dbfaker')
 app.use(express.json());
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({extended:true}));
 app.use(cors());
 connectDB();
 

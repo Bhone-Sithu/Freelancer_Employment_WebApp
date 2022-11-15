@@ -12,6 +12,7 @@ import Project_Detail from "./Pages/project_detail"
 import Freelancer_View from "./Pages/freelancer_view"
 import Payment from "./Pages/payment"
 import Project_Dashboard from "./Pages/project_dashboard"
+import Profile_Dashboard from "./Pages/profile_dashboard"
 
 const App = () => {
     return (
@@ -28,6 +29,7 @@ const App = () => {
                         <Route path='/project_dashboard/:id/*' element={<Project_Dashboard />} />
                         <Route path='/employer_register' element={<Employer_Register />} />
                         <Route path='/freelancer_register' element={<Freelancer_Register />} />
+                        <Route path='/profile/:id/*' element={<Profile_Dashboard />} />
                     </Routes>
                 </Router>
             </LocalizationProvider>
