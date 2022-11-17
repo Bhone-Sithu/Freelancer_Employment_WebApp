@@ -20,4 +20,11 @@ const update_dashboard = async(title,form_data,data) => {
     let res = await axios.put(process.env.REACT_APP_HOST + `api/dashboards/update/${data._id}`,dashboard)
         return res.status;
 }
-export {update_dashboard}
+const upload = async(file,data) => {
+    const form_data = new FormData();
+    form_data.append('file',file);
+    let res = await axios.put(process.env.REACT_APP_HOST + `api/dashboards/upload/${data._id}`,form_data)
+    return res.status;
+
+}
+export {update_dashboard,upload}

@@ -10,6 +10,7 @@ const register_employer = async (req, res) => {
         company_size: req.body.company_size,
         is_approved: false,
         company_address: req.body.company_address,
+        profile_photo:req.file.path.substring(8),
         role:"employer",
         currency: 0
     }

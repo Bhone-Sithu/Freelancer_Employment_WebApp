@@ -11,19 +11,27 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import fileDownload from 'js-file-download'
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import axios from "axios";
 import Chat from "../Components/UI/chat"
 import Chat_Admin from "../Components/UI/chat_admin"
+import Chat_Admin1 from "../Components/UI/chat_admin"
+import Chat_Admin2 from "../Components/UI/chat_admin"
+import Chat_Admin3 from "../Components/UI/chat_admin"
+import Profile from "../Components/UI/profile_nav"
 import Rating from '../Components/UI/rating';
 import { Link as RouterLink, Router, Routes, Route, useParams, Link } from "react-router-dom"
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, LinearProgress, List, ListItemButton, ListItemIcon, ListItemText, Paper, TextField } from '@mui/material';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import ThreePIcon from '@mui/icons-material/ThreeP';
 import ReviewsIcon from '@mui/icons-material/Reviews';
-import { update_dashboard } from '../Components/Function/dashboard_function'
+import { update_dashboard, upload } from '../Components/Function/dashboard_function'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import InsertDriveFile from '@mui/icons-material/InsertDriveFile';
 
 const drawerWidth = 340;
 
@@ -76,9 +84,21 @@ const mdTheme = createTheme();
 export default function Admin_Dashboard() {
     const [open, setOpen] = React.useState(true);
     const [projects, setProjects] = React.useState({});
-    const [dashboard, setDashboard] = React.useState({ requirement: "" });
+    const [dashboard, setDashboard] = React.useState({ requirement: "", project_file: "" });
     const [dialog, setDialog] = React.useState({ open: false });
     const { id } = useParams();
+
+    const upload_file = (file_data) => {
+        upload(file_data, dashboard)
+    }
+    const file_download = async (url, file_name) => {
+        axios.get(url, {
+            responseType: 'blob',
+        })
+            .then((res) => {
+                fileDownload(res.data, file_name)
+            })
+    }
     const toggleDrawer = () => {
         setOpen(!open);
     };
@@ -159,6 +179,8 @@ export default function Admin_Dashboard() {
                                 </Typography>
                             </Grid>
 
+                        </Grid>
+                        <Grid item sx={{ alignSelf: "center" }}>
                         </Grid>
                     </Toolbar>
                 </AppBar>
@@ -292,7 +314,7 @@ export default function Admin_Dashboard() {
                     <Routes>
 
                         <Route path="" element={
-                            <div style={{ padding: 50, height: "100%", backgroundColor: "#c7fdff", width: "100%" }}>
+                            <div style={{ padding: 50, backgroundColor: "#c7fdff", width: "100%" }}>
                                 <Grid container spacing={3}>
                                     <Grid item xs={12}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: "space-between" }}>
@@ -359,7 +381,11 @@ export default function Admin_Dashboard() {
                                         <Paper style={{ height: "80px" }}>{dashboard.project_demo}</Paper>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <Paper style={{ height: "80px" }}>{dashboard.project_file}</Paper>
+
+                                        <Paper style={{ height: "80px" }}><IconButton onClick={() => file_download(process.env.REACT_APP_HOST + "images/" + dashboard.project_file, dashboard.project_file.substring(16))}>
+                                            <DownloadForOfflineIcon fontSize="large" color="#8f78ff" sx={{ color: "#8f78ff" }} />
+                                        </IconButton>{dashboard.project_file.substring(16)}</Paper>
+                                        <a href={process.env.REACT_APP_HOST + "images/" + dashboard.project_file} target="_blank">View</a>
                                     </Grid>
                                     <Grid item xs={6}>
                                         {localStorage.getItem("freelancer_id") ?
@@ -394,7 +420,7 @@ export default function Admin_Dashboard() {
                                         }
 
                                     </Grid>
-                                    <Grid item xs={12} >
+                                    <Grid item xs={12} sx={{ mb: 1 }} >
                                         {localStorage.getItem("employer_id") ?
                                             <Button variant="contained" fullWidth sx={{ height: "50px", backgroundColor: "#8f78ff", color: "white" }} >Set Project as complete</Button>
                                             :
@@ -406,9 +432,9 @@ export default function Admin_Dashboard() {
                         } />
                         <Route path='chat' element={<Chat project={projects} />} />
                         <Route path='chat_admin' element={<Chat_Admin project={projects} role="admin" />} />
-                        <Route path='chat_freelancer' element={<Chat_Admin project={projects} role="freelancer" />} />
-                        <Route path='chat_employer' element={<Chat_Admin project={projects} role="employer" />} />
-                        <Route path='chat_monitor' element={<Chat_Admin project={projects} role="monitor" />} />
+                        <Route path='chat_freelancer' element={<Chat_Admin1 project={projects} role="freelancer" />} />
+                        <Route path='chat_employer' element={<Chat_Admin2 project={projects} role="employer" />} />
+                        <Route path='chat_monitor' element={<Chat_Admin3 project={projects} role="monitor" />} />
                         <Route path='rating' element={<Rating dashboard={dashboard} />} />
 
 
@@ -416,7 +442,7 @@ export default function Admin_Dashboard() {
 
                 </Box>
             </Box >
-            <FormDialog title={dialog.title} content={dialog.content}
+            <FormDialog title={dialog.title} content={dialog.content} upload_file={upload_file}
                 open={dialog.open} onCancel={onCancel} onPerform={onPerform} original_text={dialog.original_text} />
         </ThemeProvider >
 
@@ -425,14 +451,18 @@ export default function Admin_Dashboard() {
 }
 
 export function FormDialog(props) {
-    const { title, content, open, onCancel, onPerform, original_text } = props;
+    const { title, content, open, onCancel, onPerform, original_text, upload_file } = props;
     const [text, setText] = useState("");
     const [progress, setProgress] = useState(0);
+    const [file, setFile] = React.useState();
     useEffect(() => {
 
 
     }, [])
     const onSubmit = () => {
+        if (title == "Upload File") {
+            upload_file(file);
+        }
         const form_data = {
             text,
             progress
@@ -504,16 +534,21 @@ export function FormDialog(props) {
                         /> : null}
 
                     {title === "Upload File" ?
-                        <TextField
-                            autoFocus
-                            fullWidth
-                            value={text}
-                            onChange={(event) => setText(event.target.value)}
-                            id="file"
-                            label="Project File"
-                            type="file"
-                            variant="outlined"
-                        /> : null}
+                        file ?
+                            <Paper elevation={3} sx={{ width: 'fit-content', px: 2, py: 2, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>
+                                <InsertDriveFileIcon sx={{ mt: "auto" }} /> {file.name}
+                            </Paper>
+                            :
+
+                            <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large" variant="contained" component="label">
+
+                                <InsertDriveFile sx={{ fontSize: 40, mt: 0 }} />
+                                <Typography>click to Upload File</Typography>
+                                <input type="file" onChange={(e) => {
+                                    setFile(e.target.files[0]);
+                                }} hidden />
+                            </IconButton>
+                        : null}
 
 
                 </DialogContent>

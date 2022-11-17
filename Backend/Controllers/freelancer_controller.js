@@ -10,11 +10,12 @@ const register_freelancer = async (req, res) => {
         skillset: req.body.skillset,
         language: req.body.language,
         role:"freelancer",
+        profile_photo:req.files[0].path.substring(8),
+        cv:req.files[1].path.substring(8),
         currency: 0
     }
-    
     const registered = await Freelancer.create(freelancer);
-    res.status(201).json(registered);
+    res.status(201).json({});
 }
 const get_freelancers = async (req, res) => {
     const freelancers = await Freelancer.find({is_approved:true});

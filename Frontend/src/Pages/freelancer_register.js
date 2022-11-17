@@ -9,8 +9,10 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import EditIcon from '@mui/icons-material/Edit';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import InputLabel from '@mui/material/InputLabel';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
@@ -20,6 +22,8 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import ListSubheader from '@mui/material/ListSubheader';
 import FormHelperText from '@mui/material/FormHelperText';
 import { freelancer_register } from '../Components/Function/freelancer_function';
+import { IconButton, Paper } from '@mui/material';
+import InsertDriveFile from '@mui/icons-material/InsertDriveFile';
 let countryList = require('../country.js')
 
 const theme = createTheme();
@@ -30,11 +34,28 @@ export default function Freelancer_Register() {
     const [error, setError] = React.useState({});
     const [skillset, setSkill] = React.useState([]);
     const [language, setLanguage] = React.useState([]);
+    const [file, setFile] = React.useState();
+    const [cv, setCV] = React.useState();
+    const [preview, setPreview] = React.useState("");
+    const [is_preview, setIsPreview] = React.useState(false);
+    React.useEffect(() => {
+        if (file) {
+            const file_reader = new FileReader();
+            file_reader.onload = () => {
+                setPreview(file_reader.result)
+            };
+            file_reader.readAsDataURL(file);
+            setIsPreview(file.name.match(/\.(jpeg|jpg|png)$/));
+        }
+    }, [file])
     const handleSubmit = async (event) => {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
+        const file_array = [file,cv]
         form.append('language', language)
-        form.append('skillset', skillset)
+        form.append('skillset', skillset);
+        form.append('file', file);
+        form.append('file', cv);
         const status_code = await freelancer_register(form);
         setStatus(status_code);
 
@@ -61,10 +82,33 @@ export default function Freelancer_Register() {
                     }}
                 >
                     <img src='Lancer_logo.png' width={200} height={200} style={{ borderRadius: "50%" }} />
-<br></br>
+                    <br></br>
                     <Typography component="h1" variant="h5">
                         Freelancer Registration Form
                     </Typography>
+                    {is_preview ?
+                        <IconButton size="large" variant="contained" component="label">
+                            <img src={preview} width={200} height={200} style={{ borderRadius: "50%" }} />
+                            <EditIcon sx={{ position: 'absolute', color: "white", backgroundColor: "#8f78ff", borderRadius: 15, fontSize: 40, p: 0.5, bottom: 0, left: 20, top: "70%" }} />
+                            <input type="file" onChange={(e) => {
+                                setFile(e.target.files[0]);
+                            }} hidden />
+                        </IconButton>
+                        :
+                        <>
+                            <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large" variant="contained" component="label">
+
+                                <InsertDriveFile sx={{ fontSize: 40, mt: 0 }} />
+                                <Typography>Click to Upload Profile Picture</Typography>
+                                <input type="file" onChange={(e) => {
+                                    setFile(e.target.files[0]);
+                                }} hidden />
+                            </IconButton>
+                            {error.profile_photo === "" ? null :
+                                <Typography variant="body1" color={"red"}>{error.profile_photo}</Typography>}
+                        </>
+
+                    }
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             {status == 201 ? <Grid item xs={12}>
@@ -126,7 +170,7 @@ export default function Freelancer_Register() {
                                 </FormControl>
 
                             </Grid>
-                            
+
                             <Grid item xs={12}>
                                 <FormControl fullWidth>
                                     <InputLabel id="languages">Language</InputLabel>
@@ -188,19 +232,44 @@ export default function Freelancer_Register() {
                                     </Select>
                                 </FormControl>
                             </Grid>
+                            <Grid item xs={12}>
+                                {
+                                    cv ?
+                                        <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large"variant="contained" component="label">
+                                            <Paper elevation={3} sx={{ width: 'fit-content', px: 1, py: 1, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>
+                                                
+                                                    <InsertDriveFileIcon sx={{ mt: "auto" }} />
+                                                    <Typography variant="body2" sx={{}}>{cv.name}</Typography>
+                                               
 
+                                                <input type="file" onChange={(e) => {
+                                                    setCV(e.target.files[0]);
+                                                }} hidden />
+                                            </Paper>
+                                        </IconButton>
+                                        : <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large" variant="contained" component="label">
+
+                                            <InsertDriveFile sx={{ fontSize: 40, mt: 0 }} />
+                                            <Typography>Click to Upload your CV</Typography>
+                                            <input type="file" onChange={(e) => {
+                                                setCV(e.target.files[0]);
+                                            }} hidden />
+                                        </IconButton>
+                                }
+
+                            </Grid>
                         </Grid>
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{ mt: 3, mb: 2,backgroundColor:"#886fff" }}
+                            sx={{ mt: 3, mb: 2, backgroundColor: "#886fff" }}
                         >
                             Register
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="#" variant="body2" sx={{textDecoration:"none"}}>
+                                <Link href="#" variant="body2" sx={{ textDecoration: "none" }}>
                                     Already have an account? Login
                                 </Link>
                             </Grid>
@@ -208,6 +277,6 @@ export default function Freelancer_Register() {
                     </Box>
                 </Box>
             </Container>
-        </ThemeProvider>
+        </ThemeProvider >
     );
 }

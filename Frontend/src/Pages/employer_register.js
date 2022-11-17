@@ -10,6 +10,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Select from '@mui/material/Select';
+import EditIcon from '@mui/icons-material/Edit';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -19,6 +20,8 @@ import Alert from '@mui/material/Alert';
 import { CountryDropdown } from 'react-country-region-selector';
 import axios from "axios"
 import { employer_register, employers_get } from '../Components/Function/employer_function';
+import { IconButton } from '@mui/material';
+import InsertDriveFile from '@mui/icons-material/InsertDriveFile';
 let countryList = require('../country.js')
 
 
@@ -28,6 +31,9 @@ export default function Employer_Register() {
   let country_array = countryList.map((country) => <MenuItem value={country}>{country}</MenuItem>)
   const [status, setStatus] = React.useState(0);
   const [country, setCountry] = React.useState(0);
+  const [file, setFile] = React.useState();
+  const [preview, setPreview] = React.useState("");
+  const [is_preview, setIsPreview] = React.useState(false);
   const [error, setError] = React.useState({
     email: "",
     password: "",
@@ -39,6 +45,17 @@ export default function Employer_Register() {
     company_address: "",
     company_industry: "",
   });
+
+  React.useEffect(() => {
+    if (file) {
+      const file_reader = new FileReader();
+      file_reader.onload = () => {
+        setPreview(file_reader.result)
+      };
+      file_reader.readAsDataURL(file);
+      setIsPreview(file.name.match(/\.(jpeg|jpg|png)$/));
+    }
+  }, [file])
 
   const validation = async (data) => {
     let pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
@@ -52,6 +69,7 @@ export default function Employer_Register() {
       company_size: "",
       company_address: "",
       company_industry: "",
+      profile_photo: "",
     }
     let error_free = true
     let res = await axios.post(process.env.REACT_APP_HOST + "api/employers/email_duplicate", { email: data.get("email") })
@@ -65,6 +83,7 @@ export default function Employer_Register() {
     if (data.get("company_address").trim() === "") { temp.company_address = "company_address is Required!"; error_free = false }
     if (data.get("country").trim() === "") { temp.country = "country is Required!"; error_free = false }
     if (data.get("company_industry").trim() === "") { temp.company_industry = "company_industry is Required!"; error_free = false }
+    if (!data.get("file")) { temp.profile_photo = "Profile photo is required"; error_free = false;}
     setError(temp)
     return error_free;
   }
@@ -72,10 +91,11 @@ export default function Employer_Register() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    data.append('file', file)
     let validate_result = await validation(data)
     setStatus(0);
     if (validate_result) {
-      console.log(validate_result)
+      
       const status_code = await employer_register(data);
       setStatus(status_code);
     }
@@ -96,10 +116,34 @@ export default function Employer_Register() {
           }}
         >
           <img src='Lancer_logo.png' width={200} height={200} style={{ borderRadius: "50%" }} />
-<br></br>
+          <br></br>
           <Typography component="h1" variant="h5">
             Employer Registration Form
           </Typography>
+          {is_preview ?
+            <IconButton size="large" variant="contained" component="label">
+              <img src={preview} width={200} height={200} style={{ borderRadius: "50%" }} />
+              <EditIcon sx={{ position: 'absolute', color: "white", backgroundColor: "#8f78ff", borderRadius: 15, fontSize: 40, p: 0.5, bottom: 0, left: 20, top: "70%" }} />
+              <input type="file" onChange={(e) => {
+                setFile(e.target.files[0]);
+              }} hidden />
+            </IconButton>
+            :
+            <>
+              <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large" variant="contained" component="label">
+
+                <InsertDriveFile sx={{ fontSize: 40, mt: 0 }} />
+                <Typography>Click to Upload Profile Picture</Typography>
+                <input type="file" onChange={(e) => {
+                  setFile(e.target.files[0]);
+                }} hidden />
+              </IconButton>
+              {error.profile_photo === "" ? null :
+                <Typography variant="body1" color={"red"}>{error.profile_photo}</Typography>}
+            </>
+
+          }
+
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               {status === 201 ? <Grid item xs={12}>
@@ -231,7 +275,7 @@ export default function Employer_Register() {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 ,backgroundColor:"#886fff"}}
+              sx={{ mt: 3, mb: 2, backgroundColor: "#886fff" }}
             >
               Register
             </Button>

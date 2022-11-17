@@ -38,6 +38,9 @@ const Employer_schema = mongoose.Schema({
     },
     created_date:{
         type:Date
+    },
+    profile_photo:{
+        type:String
     }
 })
 module.exports = mongoose.models.employer || mongoose.model("Employer",Employer_schema)

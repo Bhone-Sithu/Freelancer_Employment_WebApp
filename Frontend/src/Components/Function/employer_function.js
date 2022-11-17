@@ -11,8 +11,8 @@ const employer_register = async (data) =>{
       company_address: data.get('company_address'),
       industry: data.get('company_industry'),
     };
-    console.log("helppppppppppppppp")
-    const res = await axios.post(`${process.env.REACT_APP_HOST}api/employers/register`, employer);
+    console.log(data.get('file'))
+    const res = await axios.post(`${process.env.REACT_APP_HOST}api/employers/register`, data);
     return res.status;
 }
 const employers_get = () => {

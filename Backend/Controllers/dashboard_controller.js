@@ -27,8 +27,17 @@ const update_dashboard = async (req, res) => {
     const updated = await Dashboard.findByIdAndUpdate(req.params.id, dashboard, { new: true });
     res.status(200).json(updated);
 }
+const upload_file = async(req,res)=>{
+    const file = {
+        project_file:req.file.path.substring(8),
+    }
+    const updated = await Dashboard.findByIdAndUpdate(req.params.id, file, { new: true });
+    res.status(200).json(updated);
+
+}
 module.exports = {
     create_dashboard,
     get_dashboard,
-    update_dashboard
+    update_dashboard,
+    upload_file
 }

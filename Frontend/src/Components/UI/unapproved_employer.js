@@ -24,8 +24,8 @@ import { visuallyHidden } from '@mui/utils';
 import axios from "axios";
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
-import {employer_delete} from '../Function/employer_function';
-import {approve,reject_account} from '../Function/admin_function';
+import { employer_delete } from '../Function/employer_function';
+import { approve, reject_account } from '../Function/admin_function';
 
 function createData(name, calories, fat, carbs, protein) {
   return {
@@ -84,6 +84,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
+  {
+    id: 'image',
+    numeric: false,
+    disablePadding: true,
+    label: ''
+  },
   {
     id: 'name',
     numeric: false,
@@ -268,12 +274,12 @@ export default function EnhancedTable() {
     else
       setMySelected(id);
   }
-  const onDelete = async(id) => {
+  const onDelete = async (id) => {
     const status = await reject_account(id);
     setMySelected("");
     // setEmployers(employers);
   }
-  const onUpdate = async(id) => {
+  const onUpdate = async (id) => {
     const status = await approve(id);
     setMySelected("");
   }
@@ -285,7 +291,7 @@ export default function EnhancedTable() {
       .catch((error) => {
         console.log(error);
       })
-      
+
   })
 
   const handleRequestSort = (event, property) => {
@@ -382,7 +388,9 @@ export default function EnhancedTable() {
                       key={row.email}
                       selected={isItemSelected}
                     >
-
+                      <TableCell align="left">
+                        <img src={process.env.REACT_APP_HOST+"images/"+row.profile_photo} width="50"height="50"/>
+                      </TableCell>
                       <TableCell
                         component="th"
                         id={labelId}
@@ -403,7 +411,7 @@ export default function EnhancedTable() {
                     </TableRow>
                   );
                 })}
-              
+
             </TableBody>
           </Table>
         </TableContainer>

@@ -11,7 +11,7 @@ const freelancer_register = async (data) =>{
       language: data.get('language').split(','),
       skillset: data.get('skillset').split(','),
     };
-    const res = await axios.post(`${process.env.REACT_APP_HOST}api/freelancers/register`, freelancer);
+    const res = await axios.post(`${process.env.REACT_APP_HOST}api/freelancers/register`, data);
     return res.status;
 }
 const freelancers_get = () => {
