@@ -24,11 +24,12 @@ import Box from '@mui/material/Box'
 import { apply_project } from '../Components/Function/project_function'
 import { Link as RouterLink } from "react-router-dom"
 import Link from '@mui/material/Link';
+import Nav from "../Components/UI/nav"
 function FeaturedPost() {
     const { id } = useParams();
     const [project, setProject] = useState({ candidate: [] });
     const [status, setStatus] = useState(0);
-    const [freelancer, setFreelancer] = useState({ skillset: [], language: [], invitations:[] });
+    const [freelancer, setFreelancer] = useState({ skillset: [], language: [], invitations: [] });
     const [message, setMessage] = useState("")
     const project_id = localStorage.getItem("project_id");
     // let freelancers = []
@@ -59,80 +60,91 @@ function FeaturedPost() {
         setStatus(res.status);
     }
     return (
-        <Container component="main" maxWidth="lg">
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <Card sx={{ display: 'flex' }}>
-                            <CardContent sx={{ flex: 1 }}>
-                                <Typography component="h1" variant="h2">
-                                    {freelancer.name}
-                                </Typography>
-                                <Typography variant="subtitle1" color="text.secondary">
-                                    email: {freelancer.email}
-                                </Typography>
-                                <Typography variant="body1" paragraph>
-                                    phone number: {freelancer.phone}
-                                </Typography>
-                                <Typography variant="body1" paragraph>
-                                    Skillset : {freelancer.skillset.join(" , ")}
-                                </Typography>
-                                <Typography variant="body1" paragraph>
-                                    Languages : {freelancer.language.join(" , ")}
-                                </Typography>
-                                <Typography variant="body1" paragraph>
-                                    country : {freelancer.country}
-                                </Typography>
-                            </CardContent>
+        <div style={{ backgroundColor: "#c7fdff" }}>
+            <Nav />
 
-                        </Card>
-                    </Grid>
-                    {status == 200 ?
-                        <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
-                            <Alert severity="success"> You have successfully {message} {freelancer.name} for this project.</Alert>
-                        </Grid> :
-                        localStorage.getItem("project_id") ?
-                            <Grid item xs={12}>
-                                <Button
-                                    fullWidth
-                                    onClick={() => accept(freelancer._id)}
-                                    variant="contained"
-                                    sx={{ mt: 3, mb: 2 }}
-                                >
-                                    Accept
-                                </Button>
+            <Container component="main" maxWidth="lg">
+
+                <Box
+                    sx={{
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Card sx={{ display: 'flex' }}>
+                                <CardContent sx={{ flex: 1 }}>
+                                    <div style={{ backgroundColor: "#8f78ff", width: "fit-content", borderRadius: 100 }}>
+                                        <img src={process.env.REACT_APP_HOST + `images/${freelancer.cv}`} width="150" height="150" />
+                                    </div>
+
+                                    <Typography component="h1" variant="h2">
+                                        {freelancer.name}
+                                    </Typography>
+                                    <Typography variant="subtitle1" color="text.secondary">
+                                        email: {freelancer.email}
+                                    </Typography>
+                                    <Typography variant="body1" paragraph>
+                                        phone number: {freelancer.phone}
+                                    </Typography>
+                                    <Typography variant="body1" paragraph>
+                                        Skillset : {freelancer.skillset.join(" , ")}
+                                    </Typography>
+                                    <Typography variant="body1" paragraph>
+                                        Languages : {freelancer.language.join(" , ")}
+                                    </Typography>
+                                    <Typography variant="body1" paragraph>
+                                        country : {freelancer.country}
+                                    </Typography>
+                                    <Typography variant="body1" paragraph>
+                                        CV file : {freelancer.cv && freelancer.cv.substring(11)}  <a href={process.env.REACT_APP_HOST + "images/" + freelancer.cv} style={{ color: "#8f78ff" }} target="_blank">  Click to View CV</a>
+                                    </Typography>
+                                </CardContent>
+
+                            </Card>
+                        </Grid>
+                        {status == 200 ?
+                            <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
+                                <Alert severity="success"> You have successfully {message} {freelancer.name} for this project.</Alert>
                             </Grid> :
-                            localStorage.getItem("invite_id") ?
-                                freelancer.invitations.includes(localStorage.getItem("invite_id")) ?
-                                    <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
-                                        <Alert severity="error"> You have already invited {freelancer.name} for this project.</Alert>
-                                    </Grid>
-                                    :
-                                    <Grid item xs={12}>
-                                        <Button
-                                            fullWidth
-                                            onClick={() => invite(freelancer._id)}
-                                            variant="contained"
-                                            sx={{ mt: 3, mb: 2 }}
-                                        >
-                                            Invite
-                                        </Button>
-                                    </Grid> : null
+                            localStorage.getItem("project_id") ?
+                                <Grid item xs={12}>
+                                    <Button
+                                        fullWidth
+                                        onClick={() => accept(freelancer._id)}
+                                        variant="contained"
+                                        sx={{ mt: 3, mb: 2 }}
+                                    >
+                                        Accept
+                                    </Button>
+                                </Grid> :
+                                localStorage.getItem("invite_id") ?
+                                    freelancer.invitations.includes(localStorage.getItem("invite_id")) ?
+                                        <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
+                                            <Alert severity="error"> You have already invited {freelancer.name} for this project.</Alert>
+                                        </Grid>
+                                        :
+                                        <Grid item xs={12}>
+                                            <Button
+                                                fullWidth
+                                                onClick={() => invite(freelancer._id)}
+                                                variant="contained"
+                                                sx={{ mt: 3, mb: 2 }}
+                                            >
+                                                Invite
+                                            </Button>
+                                        </Grid> : null
 
-                    }
+                        }
 
-                </Grid>
-            </Box>
+                    </Grid>
+                </Box>
 
-        </Container>
-
+            </Container>
+        </div>
     );
 }
 

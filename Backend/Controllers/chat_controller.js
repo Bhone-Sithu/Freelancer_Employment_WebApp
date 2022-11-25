@@ -50,9 +50,10 @@ const delete_message = async(req,res) => {
     const deleted = await Chat.findByIdAndDelete(req.params.id);
     res.status(200).json({deleted});
 }
+
 module.exports = {
     send_message,
     view_message,
     send_file,
-    delete_message
+    delete_message,
 }

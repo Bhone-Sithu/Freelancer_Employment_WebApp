@@ -144,4 +144,39 @@ const default_data = () => {
     };
     return { options, data }
 }
-export { line_chart, default_data }
+const pie_chart = (skillset_data) => {
+    const data = {
+        labels: [   
+            'PHP',
+            'JavaScript',
+            'Java',
+            'Kotlin',
+            'Business Analytic',
+            'Marketing'
+        ],
+        datasets: [
+            {
+                label: 'Numbers of skillset within projects in a year',
+                data: skillset_data,
+                backgroundColor: bgcolor,
+                borderColor: bdcolor,
+                borderWidth: 1,
+                tension: 0.1
+            }
+        ]
+    }
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Chart.js Pie Chart',
+            },
+        },
+    };
+    return { options, data }
+}
+export { line_chart, default_data,pie_chart }

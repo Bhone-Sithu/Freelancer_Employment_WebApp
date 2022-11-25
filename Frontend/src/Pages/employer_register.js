@@ -71,7 +71,7 @@ export default function Employer_Register() {
       company_industry: "",
       profile_photo: "",
     }
-    let error_free = true
+    let error_free = true;
     let res = await axios.post(process.env.REACT_APP_HOST + "api/employers/email_duplicate", { email: data.get("email") })
     if (res.data.is_duplicate) { temp.email = "Email is already taken"; error_free = false }
     if (!data.get("email").match(pattern)) { temp.email = "Invalid Email"; error_free = false }
@@ -83,7 +83,7 @@ export default function Employer_Register() {
     if (data.get("company_address").trim() === "") { temp.company_address = "company_address is Required!"; error_free = false }
     if (data.get("country").trim() === "") { temp.country = "country is Required!"; error_free = false }
     if (data.get("company_industry").trim() === "") { temp.company_industry = "company_industry is Required!"; error_free = false }
-    if (!data.get("file")) { temp.profile_photo = "Profile photo is required"; error_free = false;}
+    if (data.get("file")=="undefined") { temp.profile_photo = "Profile photo is required"; error_free = false;}
     setError(temp)
     return error_free;
   }

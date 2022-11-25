@@ -5,18 +5,18 @@ const post_project = async (req, res) => {
     const project = {
         employer_id: req.body.employer_id,
         freelancer_id: "",
-        admin_id:"62e35dca871c083794990585",
+        admin_id: "62e35dca871c083794990585",
         title: req.body.title,
         description: req.body.description,
         skillset: req.body.skillset,
-        language:req.body.language,
+        language: req.body.language,
         candidate: [],
         payment: req.body.payment,
         expire_date: 15,
         deadline: req.body.deadline,
         dashboard_id: "",
-        is_approved:false,
-        created_date:Date.now()
+        is_approved: false,
+        created_date: Date.now()
     }
     // for (let index = 1; index <= 50; index++) {
     //     const project = {
@@ -39,7 +39,7 @@ const post_project = async (req, res) => {
     res.status(201).json({ messag: "Your project post has been requested" });
 }
 const get_projects = async (req, res) => {
-    const projects = await Project.find({is_approved:true});
+    const projects = await Project.find({ is_approved: true });
     res.status(200).json(projects)
 
 }
@@ -52,7 +52,7 @@ const get_project = async (req, res) => {
 }
 const update_project = async (req, res) => {
     const project = {
-        dashboard_id:req.body.dashboard_id
+        dashboard_id: req.body.dashboard_id
     }
     const updated = await Project.findByIdAndUpdate(req.params.id, project, { new: true });
     res.status(200).json(updated);
@@ -83,8 +83,69 @@ const invite_freelancer = async (req, res) => {
     res.status(200).json(updated);
 }
 const employer_get_project = async (req, res) => {
-    const projects = await Project.find({employer_id:req.params.id})
+    const projects = await Project.find({ employer_id: req.params.id })
     res.status(200).json(projects);
+}
+const project_filter = async (req, res) => {
+    const skill = req.body.skillset;
+    const lang = req.body.language;
+    let projects;
+    if (skill != "" && lang != "") {
+        projects = await Project.find({
+            is_approved: true,
+            $and: [
+                {
+                    skillset: {
+                        $elemMatch: {
+                            $eq: skill
+                        }
+                    }
+                },
+                {
+                    language: {
+                        $elemMatch: {
+                            $eq: lang
+                        }
+                    }
+                }
+            ]
+
+        })
+    }
+    else {
+        projects = await Project.find({
+            is_approved: true,
+            $or: [
+                {
+                    skillset: {
+                        $elemMatch: {
+                            $eq: skill
+                        }
+                    }
+                },
+                {
+                    language: {
+                        $elemMatch: {
+                            $eq: lang
+                        }
+                    }
+                }
+            ]
+
+        })
+    }
+
+    res.status(200).json(projects);
+}
+const project_search = async (req, res) => {
+    const search = await Project.find({
+        is_approved: true,
+        title: {
+            $regex: '.*' + req.body.name + '.*',
+            $options: 'i'
+        }
+    })
+    res.status(200).json(search);
 }
 module.exports = {
     post_project,
@@ -95,5 +156,7 @@ module.exports = {
     apply_project,
     accept_freelancer,
     employer_get_project,
-    invite_freelancer
+    invite_freelancer,
+    project_filter,
+    project_search
 }

@@ -24,6 +24,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { freelancer_register } from '../Components/Function/freelancer_function';
 import { IconButton, Paper } from '@mui/material';
 import InsertDriveFile from '@mui/icons-material/InsertDriveFile';
+import axios from 'axios';
 let countryList = require('../country.js')
 
 const theme = createTheme();
@@ -31,13 +32,23 @@ const theme = createTheme();
 export default function Freelancer_Register() {
     let country_array = countryList.map((country) => <MenuItem value={country}>{country}</MenuItem>)
     const [status, setStatus] = React.useState(0);
-    const [error, setError] = React.useState({});
     const [skillset, setSkill] = React.useState([]);
     const [language, setLanguage] = React.useState([]);
     const [file, setFile] = React.useState();
     const [cv, setCV] = React.useState();
     const [preview, setPreview] = React.useState("");
     const [is_preview, setIsPreview] = React.useState(false);
+    const [error, setError] = React.useState({
+        email: "",
+        password: "",
+        phone: "",
+        name: "",
+        country: "",
+        skillset: "",
+        language: "",
+        cv: "",
+        profile_photo: "",
+    });
     React.useEffect(() => {
         if (file) {
             const file_reader = new FileReader();
@@ -48,16 +59,48 @@ export default function Freelancer_Register() {
             setIsPreview(file.name.match(/\.(jpeg|jpg|png)$/));
         }
     }, [file])
+    const validation = async (data) => {
+        let pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+        let temp = {
+            email: "",
+            password: "",
+            phone: "",
+            name: "",
+            country: "",
+            skillset: "",
+            language: "",
+            cv: "",
+            profile_photo: "",
+        }
+        let error_free = true;
+        console.log(data.get("skillset"))
+        let res = await axios.post(process.env.REACT_APP_HOST + "api/freelancers/email_duplicate", { email: data.get("email") })
+        if (res.data.is_duplicate) { temp.email = "Email is already taken"; error_free = false }
+        if (!data.get("email").match(pattern)) { temp.email = "Invalid Email"; error_free = false }
+        if (data.get("password").trim() === "") { temp.password = "Password is Required!"; error_free = false }
+        if (data.get("phone").trim() === "") { temp.phone = "Phone is Required!"; error_free = false }
+        if (data.get("name").trim() === "") { temp.name = "name is Required!"; error_free = false }
+        if (data.get("skillset").trim() === "") { temp.skillset = "Skillset is Required!"; error_free = false }
+        if (data.get("language").trim() === "") { temp.language = "language is Required!"; error_free = false }
+        if (data.get("country").trim() === "") { temp.country = "country is Required!"; error_free = false }
+        if (!file) { temp.profile_photo = "Profile photo is required"; error_free = false; }
+        if (!cv) { temp.cv = "Your CV file is required"; error_free = false; }
+        setError(temp)
+        return error_free;
+    }
     const handleSubmit = async (event) => {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
-        const file_array = [file,cv]
         form.append('language', language)
         form.append('skillset', skillset);
         form.append('file', file);
         form.append('file', cv);
-        const status_code = await freelancer_register(form);
-        setStatus(status_code);
+        let validate_result = await validation(form)
+        setStatus(0);
+        if (validate_result) {
+            const status_code = await freelancer_register(form);
+            setStatus(status_code);
+        }
 
     };
 
@@ -121,6 +164,8 @@ export default function Freelancer_Register() {
                                     id="email"
                                     label="Email Address"
                                     name="email"
+                                    error={error.email === "" ? false : true}
+                                    helperText={error.email}
                                     autoComplete="email"
                                 />
                             </Grid>
@@ -133,6 +178,8 @@ export default function Freelancer_Register() {
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
+                                    error={error.password === "" ? false : true}
+                                    helperText={error.password}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -142,6 +189,8 @@ export default function Freelancer_Register() {
                                     id="phone"
                                     label="Phone Number"
                                     name="phone"
+                                    error={error.phone === "" ? false : true}
+                                    helperText={error.phone}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -151,17 +200,21 @@ export default function Freelancer_Register() {
                                     id="name"
                                     label="User Name"
                                     name="name"
+                                    error={error.name === "" ? false : true}
+                                    helperText={error.name}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={12}>
 
-                                <FormControl fullWidth error={error.country === "" ? false : false}>
+                                <FormControl fullWidth error={error.country === "" ? false : true}>
                                     <InputLabel id="country">Country</InputLabel>
                                     <Select
                                         labelId="country"
                                         id="country"
                                         label="Country"
                                         name="country"
+                                        error={error.country === "" ? false : true}
+                                        helperText={error.country}
                                     >
                                         {country_array}
 
@@ -172,12 +225,14 @@ export default function Freelancer_Register() {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <FormControl fullWidth>
+                                <FormControl fullWidth error={error.language === "" ? false : true}>
                                     <InputLabel id="languages">Language</InputLabel>
                                     <Select
                                         labelId="languages"
                                         id="language"
                                         multiple
+                                        error={error.language === "" ? false : true}
+                                        helperText={error.language}
                                         value={language}
                                         onChange={handleLanguage}
                                         input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
@@ -198,16 +253,19 @@ export default function Freelancer_Register() {
 
 
                                     </Select>
+                                    <FormHelperText>{error.language}</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12}>
-                                <FormControl fullWidth>
+                                <FormControl fullWidth error={error.skillset === "" ? false : true}>
                                     <InputLabel id="skillsets">Skills</InputLabel>
                                     <Select
                                         labelId="skillsets"
                                         id="skillset"
                                         multiple
                                         value={skillset}
+
+                                        helperText={error.skillset}
                                         onChange={handleSkill}
                                         input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
                                         renderValue={(selected) => (
@@ -230,31 +288,37 @@ export default function Freelancer_Register() {
 
 
                                     </Select>
+                                    <FormHelperText>{error.skillset}</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12}>
                                 {
                                     cv ?
-                                        <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large"variant="contained" component="label">
+                                        <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large" variant="contained" component="label">
                                             <Paper elevation={3} sx={{ width: 'fit-content', px: 1, py: 1, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>
-                                                
-                                                    <InsertDriveFileIcon sx={{ mt: "auto" }} />
-                                                    <Typography variant="body2" sx={{}}>{cv.name}</Typography>
-                                               
+
+                                                <InsertDriveFileIcon sx={{ mt: "auto" }} />
+                                                <Typography variant="body2" sx={{}}>{cv.name}</Typography>
+
 
                                                 <input type="file" onChange={(e) => {
                                                     setCV(e.target.files[0]);
                                                 }} hidden />
                                             </Paper>
                                         </IconButton>
-                                        : <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large" variant="contained" component="label">
+                                        :
+                                        <>
+                                            <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large" variant="contained" component="label">
 
-                                            <InsertDriveFile sx={{ fontSize: 40, mt: 0 }} />
-                                            <Typography>Click to Upload your CV</Typography>
-                                            <input type="file" onChange={(e) => {
-                                                setCV(e.target.files[0]);
-                                            }} hidden />
-                                        </IconButton>
+                                                <InsertDriveFile sx={{ fontSize: 40, mt: 0 }} />
+                                                <Typography>Click to Upload your CV</Typography>
+                                                <input type="file" onChange={(e) => {
+                                                    setCV(e.target.files[0]);
+                                                }} hidden />
+                                            </IconButton>
+                                            {error.cv === "" ? null :
+                                                <Typography variant="body1" color={"red"}>{error.cv}</Typography>}
+                                        </>
                                 }
 
                             </Grid>

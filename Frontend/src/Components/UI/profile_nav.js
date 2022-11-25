@@ -12,10 +12,11 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function AccountMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  let navigate = useNavigate();
   const open = Boolean(anchorEl);
   let user_id = localStorage.getItem("employer_id") ?? localStorage.getItem("admin_id") ?? localStorage.getItem("freelancer_id")
 
@@ -53,7 +54,7 @@ export default function AccountMenu() {
             overflow: 'visible',
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
             mt: 1.5,
-            p:1,
+            p: 1,
             '& .MuiAvatar-root': {
               width: 32,
               height: 32,
@@ -86,12 +87,17 @@ export default function AccountMenu() {
 
 
         <Divider />
-        <MenuItem>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
+        {/* <Link to={`/login`} color="inherit"> */}
+          <MenuItem onClick={()=>{
+            localStorage.clear();
+            navigate("/login")
+          }}>
+            <ListItemIcon>
+              <Logout fontSize="small" />
+            </ListItemIcon>
+            <Typography color="black">Log out </Typography>
+          </MenuItem>
+        {/* </Link> */}
       </Menu>
     </React.Fragment>
   );

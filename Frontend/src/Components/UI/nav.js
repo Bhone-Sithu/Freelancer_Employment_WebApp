@@ -15,9 +15,9 @@ const Nav = () => {
                             >
                                 Lancer Freelance
                             </Typography></Grid> */}
-            <Grid item xs={5}>
+            <Grid item xs={5} md={3}>
                 <RouterLink to="/project_feed">
-                    <img src="../../Lancer_logo.png" width={75} height={75} />
+                    <img src={process.env.REACT_APP_HOST+"images/Files/Lancer_logo.png"} width={75} height={75} />
                 </RouterLink>
 
             </Grid>
@@ -30,6 +30,8 @@ const Nav = () => {
                         <Grid item > <Link component={RouterLink} to="..//post_project" color="white" underline="none" sx={{ fontSize: "25" }}>Post Projects</Link>
                         </Grid>
                         <Grid item > <Link component={RouterLink} to="..//payment" color="white" underline="none" sx={{ fontSize: "25" }}>Payment</Link>
+                        </Grid>
+                        <Grid item > <Link component={RouterLink} to="/project_feed/freelancers_list" color="white" underline="none" sx={{ fontSize: "25" }}>Freelancers</Link>
                         </Grid>
                     </Grid>
                 </Grid>
