@@ -21,7 +21,8 @@ const freelancer_delete = async(id) => {
   const res = await axios.delete(`${process.env.REACT_APP_HOST}api/freelancers/delete/${id}`)
   return res.status;
 }
-const freelancer_update = async(data) => {
-
+const freelancer_update = async(data,id) => {
+  const res = await axios.put(`${process.env.REACT_APP_HOST}api/freelancers/update/${id}`,data)
+  return res.status;
 }
 export {freelancer_register, freelancers_get,freelancer_delete, freelancer_update};

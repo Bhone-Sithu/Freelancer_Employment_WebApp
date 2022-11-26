@@ -28,7 +28,7 @@ import { freelancer_delete } from '../Function/freelancer_function';
 import { approve, start } from '../Function/admin_function';
 import { Grid } from '@mui/material';
 import { project_delete } from '../Function/project_function';
-
+import { useNavigate } from 'react-router-dom';
 function createData(name, calories, fat, carbs, protein) {
     return {
         name,
@@ -279,6 +279,7 @@ EnhancedTableToolbar.propTypes = {
 };
 
 export default function EnhancedTable() {
+    const navigate = useNavigate();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState([]);
@@ -301,8 +302,8 @@ export default function EnhancedTable() {
         // setEmployers(employers);
     }
     const onUpdate = async (id) => {
-        const status = await approve(id);
-        setMySelected("");
+        navigate("../update_project/" + id) 
+        
     }
     const onStart = async(id)=>{
         const status = await start(id);

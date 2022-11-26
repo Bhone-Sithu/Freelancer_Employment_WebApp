@@ -44,8 +44,8 @@ export default function Update_project() {
         description: " ",
         payment: " ",
         deadline: " ",
-        skillset: " ",
-        language: " ",
+        skillset: "",
+        language: "",
     });
     const [country, setCountry] = React.useState(0);
     const [error, setError] = React.useState({
@@ -81,7 +81,7 @@ export default function Update_project() {
         let temp = project
         let key = event.target.name
         let value = event.target.value
-        console.log(event.target)
+
         temp[key] = value
 
         setProject(temp)
@@ -92,9 +92,8 @@ export default function Update_project() {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         let validate_result = await validation(data)
-
+        data.set('deadline',project.deadline)
         if (validate_result) {
-            console.log(validate_result)
             const status_code = await project_update(data, id);
             setStatus(status_code);
             navigate('../project_list')
@@ -103,7 +102,7 @@ export default function Update_project() {
 
     };
     useEffect(() => {
-        
+
         if (first_time) {
             console.log("hi")
             axios.get(process.env.REACT_APP_HOST + `api/projects/get/${id}`)
@@ -120,147 +119,170 @@ export default function Update_project() {
 
     }, [reload])
     return (
-        <ThemeProvider theme={theme}>
-            <Container component="main" maxWidth="md">
-                <CssBaseline />
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Typography component="h1" variant="h5">
-                        Project Update Form
-                    </Typography>
-                    <Grid item xs={12}>
-                        <TextField
-                            autoComplete="given-name"
-                            name="title"
-                            required
-                            fullWidth
-                            id="title"
-                            label="Title"
-                            autoFocus
-                            error={error.title === "" ? false : true}
-                            helperText={error.title}
-                            value={project.title}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            multiline
-                            id="description"
-                            label="Description"
-                            name="description"
-                            autoComplete="family-name"
-                            error={error.description === "" ? false : true}
-                            helperText={error.description}
-                            value={project.description}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            fullWidth
-                            id="payment"
-                            label="Payment in Dollar($)"
-                            name="payment"
-                            autoComplete="email"
-                            error={error.payment === "" ? false : true}
-                            helperText={error.payment}
-                            value={project.payment}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <DesktopDatePicker
-
-                            label="Project Deadline"
-                            inputFormat="DD/MM/YYYY"
-                            value={project.deadline}
-                            onChange={handleChange}
-
-                            renderInput={(params) =>
-                                <TextField fullWidth {...params} error={error.deadline === "" ? false : true} helperText={error.deadline} />}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <FormControl fullWidth error={error.language === "" ? false : true}>
-                            <InputLabel id="languages">Language</InputLabel>
-                            <Select
-                                labelId="languages"
-                                id="language"
-                                multiple
-                                value={project.language}
-                                onChange={handleChange}
-                                input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                                renderValue={(selected) => (
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                        {selected.map((value) => (
-                                            <Chip key={value} label={value} />
-                                        ))}
-                                    </Box>
-                                )}
-                            >
-                                <MenuItem value="English">English</MenuItem>
-                                <MenuItem value="Myanmar">Myanmar</MenuItem>
-                                <MenuItem value="Japanese">Japanese</MenuItem>
-                                <MenuItem value="Chinese">Chinese</MenuItem>
-                                <MenuItem value="Korean">Korean</MenuItem>
-                                <MenuItem value="French">French</MenuItem>
-
-
-                            </Select>
-                            <FormHelperText>{error.language}</FormHelperText>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <FormControl fullWidth error={error.skillset === "" ? false : true}>
-                            <InputLabel id="skillsets">Skills</InputLabel>
-                            <Select
-                                labelId="skillsets"
-                                id="skillset"
-                                multiple
-                                value={project.skillset}
-                                onChange={handleChange}
-                                input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                                renderValue={(selected) => (
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                        {selected.map((value) => (
-                                            <Chip key={value} label={value} />
-                                        ))}
-                                    </Box>
-                                )}
-                            >
-                                <ListSubheader>Software Engineering</ListSubheader>
-                                <MenuItem value="PHP">PHP</MenuItem>
-                                <MenuItem value="JavaScript">JavaScript</MenuItem>
-                                <MenuItem value="Java">Java</MenuItem>
-                                <MenuItem value="Kotlin">Kotlin</MenuItem>
-
-                                <ListSubheader>Business</ListSubheader>
-                                <MenuItem value="Business Analytic">Business Analytic</MenuItem>
-                                <MenuItem value="Marketing">Marketing</MenuItem>
-
-
-                            </Select>
-                            <FormHelperText>{error.skillset}</FormHelperText>
-                        </FormControl>
-                    </Grid>
-
-                    <Button
-                        type="submit"
+        <>
+            <Grid item xs ={12} container component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                <Typography Typography component="h1" variant="h5" sx={{ mx: "auto" }}>
+                    Project Update Form
+                </Typography>
+                <Grid item xs={12}>
+                    <TextField
+                        autoComplete="given-name"
+                        name="title"
+                        required
                         fullWidth
-                        variant="contained"
-                        sx={{ mt: 3, mb: 2, backgroundColor: "#8f78ff" }}
-                    >
-                        Update
-                    </Button>
-                </Box>
-            </Container >
-        </ThemeProvider >
+                        id="title"
+                        label="Title"
+                        autoFocus
+                        error={error.title === "" ? false : true}
+                        helperText={error.title}
+                        value={project.title}
+                        sx={{ backgroundColor: "white" , my: 3 }}
+                        onChange={handleChange}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        required
+                        fullWidth
+                        multiline
+                        id="description"
+                        label="Description"
+                        name="description"
+                        autoComplete="family-name"
+                        error={error.description === "" ? false : true}
+                        helperText={error.description}
+                        value={project.description}
+                        sx={{ backgroundColor: "white" }}
+                        onChange={handleChange}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={5}>
+                    <TextField
+                        required
+                        fullWidth
+                        type="number"
+                        id="payment"
+                        label="Payment in Dollar($)"
+                        name="payment"
+                        autoComplete="email"
+                        error={error.payment === "" ? false : true}
+                        helperText={error.payment}
+                        value={project.payment}
+                        sx={{ backgroundColor: "white" , my: 3 }}
+                        onChange={handleChange}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6} sx={{ml:"auto"}}>
+                    <DesktopDatePicker
+
+                        label="Project Deadline"
+                        inputFormat="DD/MM/YYYY"
+                        onChange={(value) => {
+                            setProject({
+                                ...project,
+                                deadline: value
+                            })
+                            setReload(!reload)
+                        }}
+                        value={project.deadline}
+                        renderInput={(params) =>
+                            <TextField fullWidth
+                                sx={{ backgroundColor: "white" , my: 3 }}
+                                {...params}
+                                error={error.deadline === "" ? false : true}
+                                helperText={error.deadline}
+
+
+                                name="deadline"
+                            />}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <FormControl fullWidth error={error.language === "" ? false : true}>
+                        <InputLabel id="languages">Language</InputLabel>
+                        <Select
+                            labelId="languages"
+                            id="language"
+                            name="language"
+                            sx={{my: 3}}
+                            multiple
+                            value={project.language != "" ?
+                                project.language[0].split(",").length > 1 ? project.language[0].split(",")
+                                    : project.language
+                                : []}
+                            onChange={handleChange}
+                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                            renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value} sx={{ backgroundColor: "white" }} />
+                                    ))}
+                                </Box>
+                            )}
+                        >
+                            <MenuItem value="English">English</MenuItem>
+                            <MenuItem value="Myanmar">Myanmar</MenuItem>
+                            <MenuItem value="Japanese">Japanese</MenuItem>
+                            <MenuItem value="Chinese">Chinese</MenuItem>
+                            <MenuItem value="Korean">Korean</MenuItem>
+                            <MenuItem value="French">French</MenuItem>
+
+
+                        </Select>
+                        <FormHelperText>{error.language}</FormHelperText>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                    <FormControl fullWidth error={error.skillset === "" ? false : true}>
+                        <InputLabel id="skillsets">Skills</InputLabel>
+                        <Select
+                            labelId="skillsets"
+                            id="skillset"
+                            multiple
+                            sx={{my: 3}}
+                            name="skillset"
+                            value={project.skillset != "" ?
+                                project.skillset[0].split(",").length > 1 ? project.skillset[0].split(",")
+                                    : project.skillset
+                                : []}
+                            onChange={handleChange}
+                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                            renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value} sx={{ backgroundColor: "white" }} />
+                                    ))}
+                                </Box>
+                            )}
+                        >
+                            <ListSubheader>Software Engineering</ListSubheader>
+                            <MenuItem value="PHP">PHP</MenuItem>
+                            <MenuItem value="JavaScript">JavaScript</MenuItem>
+                            <MenuItem value="Java">Java</MenuItem>
+                            <MenuItem value="Kotlin">Kotlin</MenuItem>
+
+                            <ListSubheader>Business</ListSubheader>
+                            <MenuItem value="Business Analytic">Business Analytic</MenuItem>
+                            <MenuItem value="Marketing">Marketing</MenuItem>
+
+
+                        </Select>
+                        <FormHelperText>{error.skillset}</FormHelperText>
+                    </FormControl>
+                </Grid>
+
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2, backgroundColor: "#8f78ff" }}
+                >
+                    Update
+                </Button>
+                {/* //             </Grid>
+        //         </Container >
+        // </ThemeProvider > */}
+            </Grid>
+        </>
     );
 }

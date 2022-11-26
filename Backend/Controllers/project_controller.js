@@ -147,6 +147,20 @@ const project_search = async (req, res) => {
     })
     res.status(200).json(search);
 }
+const project_update_from_admin = async(req,res) => {
+    console.log(req.body)
+    
+    const project = {
+        title: req.body.title,
+        description: req.body.description,
+        skillset: req.body.skillset.split(","),
+        language: req.body.language.split(","),
+        payment: req.body.payment,
+        deadline: req.body.deadline,
+    }
+    const update = await Project.findByIdAndUpdate(req.params.id,project)
+    res.status(200).json(update)
+}
 module.exports = {
     post_project,
     get_projects,
@@ -158,5 +172,6 @@ module.exports = {
     employer_get_project,
     invite_freelancer,
     project_filter,
-    project_search
+    project_search,
+    project_update_from_admin
 }

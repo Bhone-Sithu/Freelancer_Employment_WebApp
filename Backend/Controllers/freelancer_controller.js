@@ -30,12 +30,14 @@ const update_freelancer = async (req, res) => {
         email: req.body.email,
         password: req.body.password,
         name: req.body.name,
-        // phone: 09123456789,
-        // country: "Myanmar",
-        // is_approved: false,
-        // skillset: ["JavaScript","PHP","HTML","CSS"],
-        // language: ["English","Myanmar","Japanese"],
-        // currency: 0
+        phone: req.body.phone,
+        country: req.body.country,
+        skillset: req.body.skillset.split(","),
+        language: req.body.language.split(","),
+        role: "freelancer",
+        profile_photo: req.files.length > 0 ? req.files[0].path.substring(8) : req.body.profile_photo,
+        cv: req.files > 0 ? req.files[1].path.substring(8) : req.body.cv,
+        currency: 0
     }
     const updated = await Freelancer.findByIdAndUpdate(req.params.id, freelancer, { new: true });
     res.status(200).json(updated);

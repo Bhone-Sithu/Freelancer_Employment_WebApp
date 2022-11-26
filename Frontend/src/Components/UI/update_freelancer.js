@@ -83,7 +83,7 @@ export default function Update_Freelancer() {
         }
         let error_free = true;
         console.log(data.get("skillset"))
-        let res = await axios.post(process.env.REACT_APP_HOST + "api/freelancers/email_duplicate", { email: data.get("email") })
+        let res = await axios.post(process.env.REACT_APP_HOST + "api/freelancers/email_duplicate", { email: data.get("email"), id:freelancer._id })
         if (res.data.is_duplicate) { temp.email = "Email is already taken"; error_free = false }
         if (!data.get("email").match(pattern)) { temp.email = "Invalid Email"; error_free = false }
         if (data.get("password").trim() === "") { temp.password = "Password is Required!"; error_free = false }
@@ -92,8 +92,6 @@ export default function Update_Freelancer() {
         if (data.get("skillset").trim() === "") { temp.skillset = "Skillset is Required!"; error_free = false }
         if (data.get("language").trim() === "") { temp.language = "language is Required!"; error_free = false }
         if (data.get("country").trim() === "") { temp.country = "country is Required!"; error_free = false }
-        if (!file) { temp.profile_photo = "Profile photo is required"; error_free = false; }
-        if (!cv) { temp.cv = "Your CV file is required"; error_free = false; }
         setError(temp)
         return error_free;
     }
@@ -108,14 +106,24 @@ export default function Update_Freelancer() {
         temp[key] = value
 
         setFreelancer(temp)
+
         setReload(!reload)
+        if(value != "")
+        {
+            setError({
+                ...error,
+                [key] : ""
+            })
+        }
 
     }
     const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         data.append("file", file);
+        data.append("file", cv);
         data.append("profile_photo", freelancer.profile_photo)
+        data.append("cv", freelancer.cv)
         let validate_result = await validation(data)
 
         if (validate_result) {
@@ -271,6 +279,7 @@ export default function Update_Freelancer() {
                                     <InputLabel id="languages">Language</InputLabel>
                                     <Select
                                         labelId="languages"
+                                        // sx={{backgroundColor:"white"}}
                                         id="language"
                                         name="language"
                                         multiple
@@ -279,13 +288,13 @@ export default function Update_Freelancer() {
                                         value={freelancer.language != "" ?
                                             freelancer.language[0].split(",").length > 1 ? freelancer.language[0].split(",")
                                                 : freelancer.language
-                                            : ["demo,demo"]}
+                                            : []}
                                         onChange={handleChange}
                                         input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
                                         renderValue={(selected) => (
                                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                 {Array.isArray(selected) ? selected.map((value) => (
-                                                    <Chip key={value} label={value} />
+                                                    <Chip key={value} label={value} sx={{ backgroundColor: "white" }} />
                                                 )) : null}
                                             </Box>
                                         )}
@@ -313,7 +322,7 @@ export default function Update_Freelancer() {
                                         value={freelancer.skillset != "" ?
                                             freelancer.skillset[0].split(",").length > 1 ? freelancer.skillset[0].split(",")
                                                 : freelancer.skillset
-                                            : ["demo,demo"]}
+                                            : []}
 
                                         helperText={error.skillset}
                                         onChange={handleChange}
@@ -321,7 +330,7 @@ export default function Update_Freelancer() {
                                         renderValue={(selected) => (
                                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                 {Array.isArray(selected) ? selected.map((value) => (
-                                                    <Chip key={value} label={value} />
+                                                    <Chip key={value} label={value} sx={{ backgroundColor: "white" }} />
                                                 )) : null}
                                             </Box>
                                         )}
@@ -344,18 +353,21 @@ export default function Update_Freelancer() {
                             <Grid item xs={12}>
                                 {
                                     cv ?
-                                        <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large" variant="contained" component="label">
-                                            <Paper elevation={3} sx={{ width: 'fit-content', px: 1, py: 1, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>
+                                        <Grid container >
+                                            <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large" variant="contained" component="label">
+                                                <Paper elevation={3} sx={{ width: 'fit-content', px: 1, py: 1, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>
 
-                                                <InsertDriveFileIcon sx={{ mt: "auto" }} />
-                                                <Typography variant="body2" sx={{}}>{cv.name}</Typography>
+                                                    <InsertDriveFileIcon sx={{ mt: "auto" }} />
+                                                    <Typography variant="body2" sx={{}}>{cv.name}</Typography>
 
 
-                                                <input type="file" onChange={(e) => {
-                                                    setCV(e.target.files[0]);
-                                                }} hidden />
-                                            </Paper>
-                                        </IconButton>
+                                                    <input type="file" onChange={(e) => {
+                                                        setCV(e.target.files[0]);
+                                                    }} hidden />
+                                                </Paper>
+                                            </IconButton>
+                                            <Typography sx={{ mt: "auto", mb: "auto", color: "#8f78ff" }}>Click the icon from the left to Update your CV</Typography>
+                                        </Grid>
                                         :
                                         <Grid container>
                                             <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large" variant="contained" component="label">
