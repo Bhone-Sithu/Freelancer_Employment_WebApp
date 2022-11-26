@@ -18,17 +18,20 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Alert from '@mui/material/Alert';
 import EditIcon from '@mui/icons-material/Edit';
-import { IconButton } from '@mui/material';
+import { IconButton, Paper } from '@mui/material';
 import InsertDriveFile from '@mui/icons-material/InsertDriveFile';
 import axios from "axios"
-import { employer_register, employers_get, employer_update } from '../Function/employer_function';
-
+import { freelancer_update } from '../Function/freelancer_function';
+import Chip from '@mui/material/Chip';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import ListSubheader from '@mui/material/ListSubheader';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 let countryList = require('../../country.js')
 
 
 const theme = createTheme();
 
-export default function Update_Employer() {
+export default function Update_Freelancer() {
     const navigate = useNavigate();
     const { id } = useParams()
     let country_array = countryList.map((country) => {
@@ -38,19 +41,19 @@ export default function Update_Employer() {
     const [status, setStatus] = React.useState(0);
     const [reload, setReload] = React.useState(false);
     const [file, setFile] = React.useState();
+    const [cv, setCV] = React.useState();
     const [preview, setPreview] = React.useState("");
     const [is_preview, setIsPreview] = React.useState(false);
-    const [employer, setEmployer] = React.useState({
+    const [freelancer, setFreelancer] = React.useState({
         email: " ",
         password: " ",
         phone: " ",
         name: " ",
         country: " ",
-        company_name: " ",
-        company_size: " ",
-        company_address: " ",
-        company_industry: "Web and Mobile Software",
+        skillset: "",
+        language: "",
         profile_photo: " ",
+        cv: " ",
     });
     const [country, setCountry] = React.useState(0);
     const [error, setError] = React.useState({
@@ -59,11 +62,10 @@ export default function Update_Employer() {
         phone: "",
         name: "",
         country: "",
-        company_name: "",
-        company_size: "",
-        company_address: "",
-        company_industry: "",
+        skillset: "",
+        language: "",
         profile_photo: "",
+        cv: "",
     });
 
     const validation = async (data) => {
@@ -74,35 +76,38 @@ export default function Update_Employer() {
             phone: "",
             name: "",
             country: "",
-            company_name: "",
-            company_size: "",
-            company_address: "",
-            company_industry: "",
+            skillset: "",
+            language: "",
+            cv: "",
             profile_photo: "",
         }
-        let error_free = true
-        let res = await axios.post(process.env.REACT_APP_HOST + "api/employers/email_duplicate", { email: data.get("email"), id })
+        let error_free = true;
+        console.log(data.get("skillset"))
+        let res = await axios.post(process.env.REACT_APP_HOST + "api/freelancers/email_duplicate", { email: data.get("email") })
         if (res.data.is_duplicate) { temp.email = "Email is already taken"; error_free = false }
         if (!data.get("email").match(pattern)) { temp.email = "Invalid Email"; error_free = false }
         if (data.get("password").trim() === "") { temp.password = "Password is Required!"; error_free = false }
         if (data.get("phone").trim() === "") { temp.phone = "Phone is Required!"; error_free = false }
         if (data.get("name").trim() === "") { temp.name = "name is Required!"; error_free = false }
-        if (data.get("company_name").trim() === "") { temp.company_name = "company_name is Required!"; error_free = false }
-        if (data.get("company_size").trim() === "") { temp.company_size = "company_size is Required!"; error_free = false }
-        if (data.get("company_address").trim() === "") { temp.company_address = "company_address is Required!"; error_free = false }
+        if (data.get("skillset").trim() === "") { temp.skillset = "Skillset is Required!"; error_free = false }
+        if (data.get("language").trim() === "") { temp.language = "language is Required!"; error_free = false }
         if (data.get("country").trim() === "") { temp.country = "country is Required!"; error_free = false }
-        if (data.get("company_industry").trim() === "") { temp.company_industry = "company_industry is Required!"; error_free = false }
+        if (!file) { temp.profile_photo = "Profile photo is required"; error_free = false; }
+        if (!cv) { temp.cv = "Your CV file is required"; error_free = false; }
         setError(temp)
         return error_free;
     }
     const handleChange = async (event) => {
-        let temp = employer
+        let temp = freelancer
         let key = event.target.name
         let value = event.target.value
+        if (key == "language" || key == "skillset") {
+
+        }
         console.log(event.target)
         temp[key] = value
 
-        setEmployer(temp)
+        setFreelancer(temp)
         setReload(!reload)
 
     }
@@ -110,17 +115,15 @@ export default function Update_Employer() {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         data.append("file", file);
-        data.append("profile_photo", employer.profile_photo)
+        data.append("profile_photo", freelancer.profile_photo)
         let validate_result = await validation(data)
 
         if (validate_result) {
             console.log(validate_result)
-            const status_code = await employer_update(data, id);
+            const status_code = await freelancer_update(data, id);
             setStatus(status_code);
-            navigate('../employer_list')
+            navigate('../freelancer_list')
         }
-
-
     };
     useEffect(() => {
         if (file) {
@@ -133,9 +136,9 @@ export default function Update_Employer() {
         }
         if (first_time) {
             console.log("hi")
-            axios.get(process.env.REACT_APP_HOST + `api/employers/get/${id}`)
+            axios.get(process.env.REACT_APP_HOST + `api/freelancers/get/${id}`)
                 .then((response) => {
-                    setEmployer(response.data);
+                    setFreelancer(response.data);
 
                 })
                 .catch((error) => {
@@ -143,7 +146,6 @@ export default function Update_Employer() {
                 })
             setFirstTime(false);
         }
-
 
     }, [reload])
     return (
@@ -159,7 +161,7 @@ export default function Update_Employer() {
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Employer Update Form
+                        Freelancer Update Form
                     </Typography>
                     {is_preview ?
                         <IconButton size="large" variant="contained" component="label">
@@ -172,7 +174,7 @@ export default function Update_Employer() {
                         </IconButton>
                         :
                         <IconButton size="large" variant="contained" component="label">
-                            <img src={process.env.REACT_APP_HOST + "images/" + employer.profile_photo} width={200} height={200} style={{ borderRadius: "50%" }} />
+                            <img src={process.env.REACT_APP_HOST + "images/" + freelancer.profile_photo} width={200} height={200} style={{ borderRadius: "50%" }} />
                             <EditIcon sx={{ position: 'absolute', color: "white", backgroundColor: "#8f78ff", borderRadius: 15, fontSize: 40, p: 0.5, bottom: 0, left: 20, top: "70%" }} />
                             <input type="file" onChange={(e) => {
                                 setFile(e.target.files[0]);
@@ -191,7 +193,7 @@ export default function Update_Employer() {
                                 <TextField
                                     sx={{ backgroundColor: "white" }}
                                     onChange={handleChange}
-                                    value={employer.email}
+                                    value={freelancer.email}
                                     variant="outlined"
                                     fullWidth
                                     id="email"
@@ -200,6 +202,7 @@ export default function Update_Employer() {
                                     autoComplete="email"
                                     error={error.email === "" ? false : true}
                                     helperText={error.email}
+
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -214,14 +217,14 @@ export default function Update_Employer() {
                                     autoComplete="new-password"
                                     error={error.password === "" ? false : true}
                                     helperText={error.password}
-                                    value={employer.password}
+                                    value={freelancer.password}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     sx={{ backgroundColor: "white" }}
                                     onChange={handleChange}
-                                    value={employer.phone}
+                                    value={freelancer.phone}
                                     fullWidth
                                     id="phone"
                                     label="Phone Number"
@@ -234,7 +237,7 @@ export default function Update_Employer() {
                                 <TextField
                                     sx={{ backgroundColor: "white" }}
                                     onChange={handleChange}
-                                    value={employer.name}
+                                    value={freelancer.name}
                                     fullWidth
                                     id="name"
                                     label="User Name"
@@ -253,7 +256,7 @@ export default function Update_Employer() {
                                         id="country"
                                         label="Country"
                                         name="country"
-                                        value={employer.country}
+                                        value={freelancer.country}
                                         onChange={handleChange}
                                     >
                                         {country_array}
@@ -263,67 +266,115 @@ export default function Update_Employer() {
                                 </FormControl>
 
                             </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    sx={{ backgroundColor: "white" }}
-                                    value={employer.company_name}
-                                    fullWidth
-                                    id="company_name"
-                                    label="Company Name"
-                                    onChange={handleChange}
-                                    name="company_name"
-                                    error={error.company_name === "" ? false : true}
-                                    helperText={error.company_name}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    sx={{ backgroundColor: "white" }}
-                                    value={employer.company_size}
-                                    fullWidth
-                                    id="company_size"
-                                    label="Company Size"
-                                    onChange={handleChange}
-                                    name="company_size"
-                                    error={error.company_size === "" ? false : true}
-                                    helperText={error.company_size}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <FormControl fullWidth error={error.company_industry === "" ? false : true}>
-                                    <InputLabel id="industry">Company Industry</InputLabel>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth error={error.language === "" ? false : true}>
+                                    <InputLabel id="languages">Language</InputLabel>
                                     <Select
-                                        sx={{ backgroundColor: "white" }}
-                                        labelId="industry"
-                                        id="company_industry"
-                                        label="Company Industry"
-                                        name="company_industry"
-                                        value={employer.company_industry}
+                                        labelId="languages"
+                                        id="language"
+                                        name="language"
+                                        multiple
+                                        error={error.language === "" ? false : true}
+                                        helperText={error.language}
+                                        value={freelancer.language != "" ?
+                                            freelancer.language[0].split(",").length > 1 ? freelancer.language[0].split(",")
+                                                : freelancer.language
+                                            : ["demo,demo"]}
                                         onChange={handleChange}
+                                        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                                        renderValue={(selected) => (
+                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                {Array.isArray(selected) ? selected.map((value) => (
+                                                    <Chip key={value} label={value} />
+                                                )) : null}
+                                            </Box>
+                                        )}
                                     >
-                                        <MenuItem value={"Web and Mobile Software"}>Web and Mobile Software</MenuItem>
-                                        <MenuItem value={"Business"}>Business</MenuItem>
-                                        <MenuItem value={"Entertainment"}>Entertainment</MenuItem>
+                                        <MenuItem value="English">English</MenuItem>
+                                        <MenuItem value="Myanmar">Myanmar</MenuItem>
+                                        <MenuItem value="Japanese">Japanese</MenuItem>
+                                        <MenuItem value="Chinese">Chinese</MenuItem>
+                                        <MenuItem value="Korean">Korean</MenuItem>
+                                        <MenuItem value="French">French</MenuItem>
+
+
                                     </Select>
-                                    <FormHelperText>{error.company_industry}</FormHelperText>
+                                    <FormHelperText>{error.language}</FormHelperText>
                                 </FormControl>
                             </Grid>
-                            <Grid item xs={12} sm={12}>
-                                <TextField
-                                    sx={{ backgroundColor: "white" }}
-                                    value={employer.company_address}
-                                    fullWidth
-                                    multiline
-                                    id="company_address"
-                                    label="Company Address"
-                                    name="company_address"
-                                    onChange={handleChange}
-                                    error={error.company_address === "" ? false : true}
-                                    helperText={error.company_address}
-                                />
+                            <Grid item xs={12}>
+                                <FormControl fullWidth error={error.skillset === "" ? false : true}>
+                                    <InputLabel id="skillsets">Skills</InputLabel>
+                                    <Select
+                                        labelId="skillsets"
+                                        id="skillset"
+                                        name="skillset"
+                                        multiple
+                                        value={freelancer.skillset != "" ?
+                                            freelancer.skillset[0].split(",").length > 1 ? freelancer.skillset[0].split(",")
+                                                : freelancer.skillset
+                                            : ["demo,demo"]}
+
+                                        helperText={error.skillset}
+                                        onChange={handleChange}
+                                        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                                        renderValue={(selected) => (
+                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                {Array.isArray(selected) ? selected.map((value) => (
+                                                    <Chip key={value} label={value} />
+                                                )) : null}
+                                            </Box>
+                                        )}
+                                    >
+                                        <ListSubheader>Software Engineering</ListSubheader>
+                                        <MenuItem value="PHP">PHP</MenuItem>
+                                        <MenuItem value="JavaScript">JavaScript</MenuItem>
+                                        <MenuItem value="Java">Java</MenuItem>
+                                        <MenuItem value="Kotlin">Kotlin</MenuItem>
+
+                                        <ListSubheader>Business</ListSubheader>
+                                        <MenuItem value="Business Analytic">Business Analytic</MenuItem>
+                                        <MenuItem value="Marketing">Marketing</MenuItem>
+
+
+                                    </Select>
+                                    <FormHelperText>{error.skillset}</FormHelperText>
+                                </FormControl>
                             </Grid>
+                            <Grid item xs={12}>
+                                {
+                                    cv ?
+                                        <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large" variant="contained" component="label">
+                                            <Paper elevation={3} sx={{ width: 'fit-content', px: 1, py: 1, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>
+
+                                                <InsertDriveFileIcon sx={{ mt: "auto" }} />
+                                                <Typography variant="body2" sx={{}}>{cv.name}</Typography>
 
 
+                                                <input type="file" onChange={(e) => {
+                                                    setCV(e.target.files[0]);
+                                                }} hidden />
+                                            </Paper>
+                                        </IconButton>
+                                        :
+                                        <Grid container>
+                                            <IconButton sx={{ mt: 2, color: "#8f78ff", mt: 0 }} size="large" variant="contained" component="label">
+                                                <Paper elevation={3} sx={{ width: 'fit-content', px: 1, py: 1, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>
+
+                                                    <InsertDriveFileIcon sx={{ mt: "auto" }} />
+                                                    <Typography variant="body2" sx={{}}>{freelancer.cv}</Typography>
+
+
+                                                    <input type="file" onChange={(e) => {
+                                                        setCV(e.target.files[0]);
+                                                    }} hidden />
+                                                </Paper>
+                                            </IconButton>
+                                            <Typography sx={{ mt: "auto", mb: "auto", color: "#8f78ff" }}>Click the icon from the left to Update your CV</Typography>
+                                        </Grid>
+                                }
+
+                            </Grid>
                         </Grid>
                         <Button
                             type="submit"
@@ -337,6 +388,6 @@ export default function Update_Employer() {
                     </Box>
                 </Box>
             </Container>
-        </ThemeProvider>
+        </ThemeProvider >
     );
 }

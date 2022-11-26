@@ -6,15 +6,7 @@ const Nav = () => {
     return (
         <Grid container sx={{ backgroundColor: "#8f78ff" }}>
 
-            {/* <Grid item xs={8}><Typography
-                                component="h1"
-                                variant="h6"
-                                color="inherit"
-                                noWrap
-                                sx={{ flexGrow: 1 }}
-                            >
-                                Lancer Freelance
-                            </Typography></Grid> */}
+
             <Grid item xs={5} md={3}>
                 <RouterLink to="/project_feed">
                     <img src={process.env.REACT_APP_HOST+"images/Files/Lancer_logo.png"} width={75} height={75} />

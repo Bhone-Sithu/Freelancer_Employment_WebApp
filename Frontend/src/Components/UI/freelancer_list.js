@@ -24,8 +24,11 @@ import { visuallyHidden } from '@mui/utils';
 import axios from "axios";
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
-import {freelancer_delete} from '../Function/freelancer_function';
-import {approve} from '../Function/admin_function';
+import { freelancer_delete } from '../Function/freelancer_function';
+import { approve } from '../Function/admin_function';
+import { InputAdornment, TextField } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import { useNavigate } from 'react-router-dom';
 
 function createData(name, calories, fat, carbs, protein) {
   return {
@@ -216,20 +219,20 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-        Freelancer Account List
+          Freelancer Account List
         </Typography>
       )}
 
       {numSelected > 0 ? (
         <>
-          <Tooltip title="Reject">
-            <Button variant="outlined" startIcon={<DeleteIcon />} onClick={() => onDelete(selected_id)}>
-              Reject
-            </Button>
+          <Tooltip title="Delete">
+            <IconButton onClick={(event) => onDelete(selected_id)} color="warning">
+              <DeleteIcon />
+            </IconButton>
           </Tooltip>
-          <Tooltip title="Approve">
+          <Tooltip title="Update">
             <Button variant="outlined" startIcon={<EditIcon />} onClick={() => onUpdate(selected_id)}>
-              Approve
+              Update
             </Button>
           </Tooltip>
         </>
@@ -246,6 +249,7 @@ EnhancedTableToolbar.propTypes = {
 };
 
 export default function EnhancedTable() {
+  const navigate = useNavigate();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -254,7 +258,19 @@ export default function EnhancedTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [employers, setEmployers] = React.useState([]);
   const [myselected, setMySelected] = React.useState('');
-
+  const [search_text, setSearch_Text] = React.useState('');
+  const search = (e) => {
+   
+      axios.post(process.env.REACT_APP_HOST + "api/freelancers/search", { name: e.target.value })
+        .then((response) => {
+          setEmployers(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    
+    setSearch_Text(e.target.value)
+  }
   const handleMySelect = (id) => {
     if (id == myselected) {
       setMySelected("");
@@ -262,14 +278,13 @@ export default function EnhancedTable() {
     else
       setMySelected(id);
   }
-  const onDelete = async(id) => {
+  const onDelete = async (id) => {
     const status = await freelancer_delete(id);
     setMySelected("");
     // setEmployers(employers);
   }
-  const onUpdate = async(id) => {
-    const status = await approve(id);
-    setMySelected("");
+  const onUpdate = async (id) => {
+    navigate(`../update_freelancer/${id}`)
   }
   useEffect(() => {
     axios.get(process.env.REACT_APP_HOST + "api/freelancers/get")
@@ -279,8 +294,8 @@ export default function EnhancedTable() {
       .catch((error) => {
         console.log(error);
       })
-      
-  })
+
+  },[])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -338,6 +353,18 @@ export default function EnhancedTable() {
 
   return (
     <Box sx={{ width: '100%', ml: 1.5 }}>
+      <TextField
+        sx={{
+          mb: 4,
+          mt: 5,
+          backgroundColor: "white"
+        }}
+        InputProps={{
+          startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: "#8f78ff" }} /></InputAdornment>,
+        }}
+        label="Search"
+        helperText="Search by Name, Email, Company Name, Phone number, Country"
+        fullWidth value={search_text} onChange={search} />
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={myselected.length} onDelete={onDelete} onUpdate={onUpdate} selected_id={myselected} />
         <TableContainer>
@@ -396,7 +423,7 @@ export default function EnhancedTable() {
                     </TableRow>
                   );
                 })}
-              
+
             </TableBody>
           </Table>
         </TableContainer>

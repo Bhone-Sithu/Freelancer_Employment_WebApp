@@ -27,6 +27,8 @@ import Freelancer_List from "../Components/UI/freelancer_list";
 import Project_List from "../Components/UI/project_list";
 import Unapproved_Project from "../Components/UI/unapproved_project";
 import Update_Employer from "../Components/UI/update_employer";
+import Update_Freelancer from "../Components/UI/update_freelancer";
+import Update_Project from "../Components/UI/update_project";
 import { BrowserRouter as Router, Routes, Route, Link, Switch } from "react-router-dom";
 import Payment from "../Pages/payment";
 import Dashboard from '../Components/UI/admin_dashboard';
@@ -86,6 +88,7 @@ const mdTheme = createTheme();
 
 export default function Admin_Dashboard() {
     const [open, setOpen] = React.useState(true);
+    
     const toggleDrawer = () => {
         setOpen(!open);
     };
@@ -269,7 +272,9 @@ export default function Admin_Dashboard() {
                                 <Route path='unapproved_freelancers' element={<Unapproved_Freelancer />} />
                                 <Route path='unapproved_projects' element={< Unapproved_Project />} />
                                 <Route path='freelancer_list' element={<Freelancer_List />} />
+                                <Route path='update_freelancer/:id' element={<Update_Freelancer />} />
                                 <Route path='project_list' element={<Project_List />} />
+                                <Route path='update_project/:id' element={<Update_Project />} />
                                 <Route path='payment/:id'element={<Payment />} />
                                 
                             </Routes>

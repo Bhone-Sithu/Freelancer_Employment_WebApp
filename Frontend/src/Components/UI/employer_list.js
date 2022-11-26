@@ -24,8 +24,10 @@ import { visuallyHidden } from '@mui/utils';
 import axios from "axios";
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
-import {employer_delete} from '../Function/employer_function';
-import {useNavigate} from "react-router-dom"
+import { employer_delete } from '../Function/employer_function';
+import { useNavigate, useParams } from "react-router-dom"
+import { InputAdornment, TextField } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 function createData(name, calories, fat, carbs, protein) {
   return {
@@ -229,7 +231,7 @@ const EnhancedTableToolbar = (props) => {
       {numSelected > 0 ? (
         <>
           <Tooltip title="Delete">
-            <IconButton onClick={(event) => onDelete(selected_id)} color = "warning">
+            <IconButton onClick={(event) => onDelete(selected_id)} color="warning">
               <DeleteIcon />
             </IconButton>
           </Tooltip>
@@ -257,10 +259,25 @@ export default function EnhancedTable() {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
+  const [reload, setReload] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [employers, setEmployers] = React.useState([]);
   const [myselected, setMySelected] = React.useState('');
+  const [search_text, setSearch_Text] = React.useState('');
   let navigate = useNavigate();
+  let param = useParams();
+  const search = (e) => {
+    if (param["*"] == "employer_List") {
+      axios.post(process.env.REACT_APP_HOST + "api/employers/search", { name: e.target.value })
+        .then((response) => {
+          setEmployers(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    }
+    setSearch_Text(e.target.value)
+  }
   const handleMySelect = (id) => {
     if (id == myselected) {
       setMySelected("");
@@ -268,10 +285,11 @@ export default function EnhancedTable() {
     else
       setMySelected(id);
   }
-  const onDelete = async(id) => {
+  const onDelete = async (id) => {
     const status = await employer_delete(id);
     // setEmployers(employers);
     setMySelected("");
+    setReload(!reload)
   }
   const onUpdate = (id) => {
     navigate(`../update_employer/${id}`)
@@ -284,8 +302,8 @@ export default function EnhancedTable() {
       .catch((error) => {
         console.log(error);
       })
-      
-  })
+
+  }, [reload])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -343,6 +361,18 @@ export default function EnhancedTable() {
 
   return (
     <Box sx={{ width: '100%', ml: 1.5 }}>
+      <TextField
+        sx={{
+          mb: 4,
+          mt: 5,
+          backgroundColor: "white"
+        }}
+        InputProps={{
+          startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: "#8f78ff" }} /></InputAdornment>,
+        }}
+        label="Search"
+        helperText="Search by Name, Email, Company Name, Phone number, Country"
+        fullWidth value={search_text} onChange={search} />
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={myselected.length} onDelete={onDelete} onUpdate={onUpdate} selected_id={myselected} />
         <TableContainer>

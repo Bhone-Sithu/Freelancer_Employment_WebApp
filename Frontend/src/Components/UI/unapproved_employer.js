@@ -266,7 +266,7 @@ export default function EnhancedTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [employers, setEmployers] = React.useState([]);
   const [myselected, setMySelected] = React.useState('');
-
+  const [reload,setReload] = React.useState(false);
   const handleMySelect = (id) => {
     if (id == myselected) {
       setMySelected("");
@@ -292,7 +292,7 @@ export default function EnhancedTable() {
         console.log(error);
       })
 
-  })
+  },[myselected])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
