@@ -13,7 +13,7 @@ const Chat_Admin = (props) => {
 
     const { project, role } = props;
     const { id } = useParams();
-    const [message, setMessage] = useState(["",""]);
+    const [message, setMessage] = useState(["", ""]);
     const [effect, setEffect] = useState({ hi: true })
     const [file, setFile] = useState();
     const [preview, setPreview] = useState("");
@@ -60,7 +60,7 @@ const Chat_Admin = (props) => {
             file_reader.readAsDataURL(file);
             setIsPreview(file.name.match(/\.(jpeg|jpg|png)$/));
         }
-    }, [effect, file,role])
+    }, [effect, file, role])
     const send_message = async (event) => {
         if (file) {
             const form_data = new FormData();
@@ -138,9 +138,11 @@ const Chat_Admin = (props) => {
                             val.content == "$file" ?
                                 val.file_type.substring(0, 5) == "image" ?
                                     <Grid item xs={12} container justifyContent="flex-end">
-                                        <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
-                                            <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
-                                        </IconButton>
+                                        {role == "monitor" ?
+                                            <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
+                                                <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
+                                            </IconButton> : null}
+
                                         <Paper elevation={3} sx={{ width: 'fit-content', px: 2, py: 0.5, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>
                                             <img src={process.env.REACT_APP_HOST + "images/" + val.file_path} width="250" height="250" style={{ borderRadius: 15 }} />
                                         </Paper>
@@ -148,9 +150,10 @@ const Chat_Admin = (props) => {
                                     :
                                     val.file_type.substring(0, 5) == "video" ?
                                         <Grid item xs={12} container justifyContent="flex-end">
-                                            <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
-                                                <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
-                                            </IconButton>
+                                            {role == "monitor" ?
+                                                <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
+                                                    <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
+                                                </IconButton> : null}
                                             <Paper elevation={3} sx={{ width: 'fit-content', px: 2, py: 0.5, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>
                                                 <video width="250" height="250" controls>
                                                     <source src={process.env.REACT_APP_HOST + "images/" + val.file_path} type={val.file_type} />
@@ -159,9 +162,10 @@ const Chat_Admin = (props) => {
                                         </Grid> :
                                         val.file_type.substring(0, 5) == "audio" ?
                                             <Grid item xs={12} container justifyContent="flex-end">
-                                                <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
-                                                    <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
-                                                </IconButton>
+                                                {role == "monitor" ?
+                                                    <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
+                                                        <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
+                                                    </IconButton> : null}
                                                 <Paper elevation={3} sx={{ width: 'fit-content', px: 2, py: 0.5, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>
                                                     <audio controls>
                                                         <source src={process.env.REACT_APP_HOST + "images/" + val.file_path} type={val.file_type} />
@@ -170,9 +174,10 @@ const Chat_Admin = (props) => {
                                             </Grid>
                                             :
                                             <Grid item xs={12} container justifyContent="flex-end">
-                                                <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
-                                                    <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
-                                                </IconButton>
+                                                {role == "monitor" ?
+                                                    <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
+                                                        <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
+                                                    </IconButton> : null}
                                                 <Paper elevation={3} sx={{ width: 'fit-content', height: 'fit-content', px: 2, py: 0.5, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>
                                                     <Grid container>
                                                         <IconButton onClick={() => file_download(process.env.REACT_APP_HOST + "images/" + val.file_path, val.file_path.substring(11))}>
@@ -188,9 +193,10 @@ const Chat_Admin = (props) => {
                                             </Grid>
                                 :
                                 <Grid item xs={12} container justifyContent="flex-end">
-                                    <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
-                                        <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
-                                    </IconButton>
+                                    {role == "monitor" ? 
+                                        <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
+                                            <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
+                                        </IconButton> : null}
                                     <Paper elevation={3} sx={{ width: 'fit-content', px: 2, py: 0.5, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>{val.content}</Paper>
 
                                 </Grid>
@@ -201,9 +207,10 @@ const Chat_Admin = (props) => {
                                         <Paper elevation={3} sx={{ width: 'fit-content', px: 2, py: 0.5, borderRadius: "5px" }}>
                                             <img src={process.env.REACT_APP_HOST + "images/" + val.file_path} width="250" height="250" style={{ borderRadius: 15 }} />
                                         </Paper>
+                                        {role == "monitor" ? 
                                         <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
                                             <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
-                                        </IconButton>
+                                        </IconButton> : null}
                                     </Grid>
                                     :
                                     val.file_type.substring(0, 5) == "video" ?
@@ -213,9 +220,10 @@ const Chat_Admin = (props) => {
                                                     <source src={process.env.REACT_APP_HOST + "images/" + val.file_path} type={val.file_type} />
                                                 </video>
                                             </Paper>
-                                            <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
-                                                <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
-                                            </IconButton>
+                                            {role == "monitor" ? 
+                                        <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
+                                            <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
+                                        </IconButton> : null}
                                         </Grid> :
                                         val.file_type.substring(0, 5) == "audio" ?
                                             <Grid item xs={12} container >
@@ -224,9 +232,10 @@ const Chat_Admin = (props) => {
                                                         <source src={process.env.REACT_APP_HOST + "images/" + val.file_path} type={val.file_type} />
                                                     </audio>
                                                 </Paper>
-                                                <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
-                                                    <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
-                                                </IconButton>
+                                                {role == "monitor" ? 
+                                        <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
+                                            <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
+                                        </IconButton> : null}
                                             </Grid>
                                             :
                                             <Grid item xs={12} container >
@@ -242,16 +251,18 @@ const Chat_Admin = (props) => {
                                                     </Grid>
                                                     <a href={process.env.REACT_APP_HOST + "images/" + val.file_path} target="_blank" style={{ color: "white", backgroundColor: "#8f78ff", padding: 4, borderRadius: 5, marginLeft: "45%" }}> View File</a>
                                                 </Paper>
-                                                <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
-                                                    <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
-                                                </IconButton>
+                                                {role == "monitor" ? 
+                                        <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
+                                            <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
+                                        </IconButton> : null}
                                             </Grid>
                                 :
                                 <Grid item xs={12} container  >
                                     <Paper elevation={3} sx={{ width: 'fit-content', px: 2, py: 0.5, borderRadius: "5px" }}>{val.content}</Paper>
-                                    <IconButton onClick={() => { delete_message(val._id) }} sx={{ }}>
-                                        <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
-                                    </IconButton>
+                                    {role == "monitor" ? 
+                                        <IconButton onClick={() => { delete_message(val._id) }} sx={{}}>
+                                            <CancelIcon sx={{ position: 'absolute', color: '#ff6363' }} />
+                                        </IconButton> : null}
                                 </Grid>
 
                     )) : null}

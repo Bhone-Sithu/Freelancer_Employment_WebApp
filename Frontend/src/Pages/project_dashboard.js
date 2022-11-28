@@ -89,11 +89,12 @@ export default function Admin_Dashboard() {
     const [reload, setReload] = React.useState(false);
     const { id } = useParams();
     const set_complete = () => {
-        update_dashboard("complete",{},dashboard);
+        update_dashboard("complete", {}, dashboard);
         setReload(!reload);
     }
     const upload_file = (file_data) => {
         upload(file_data, dashboard)
+        setReload(!reload);
     }
     const file_download = async (url, file_name) => {
         axios.get(url, {
@@ -114,6 +115,7 @@ export default function Admin_Dashboard() {
         console.log(dialog);
         update_dashboard(dialog.title, form_data, dashboard)
         setDialog({ open: false });
+        setReload(!reload);
     }
     useEffect(() => {
         axios.get(process.env.REACT_APP_HOST + `api/projects/get/${id}`)
@@ -131,7 +133,7 @@ export default function Admin_Dashboard() {
                 console.log(error);
             })
 
-    }, [reload,dialog])
+    }, [reload, dialog])
 
     return (
         <ThemeProvider theme={mdTheme}>
@@ -265,18 +267,20 @@ export default function Admin_Dashboard() {
                                     </Link>
                                 </>
                             }
-
+                            {localStorage.getItem("admin_id") ?
+                                        null :
                             <Link to={"/project_dashboard/" + projects._id + "/rating"}>
                                 <ListItemButton>
                                     <ListItemIcon>
                                         <ReviewsIcon sx={{ textDecoration: "none", color: "white" }} />
                                     </ListItemIcon>
-                                    {localStorage.getItem("employer_id") ?
-                                        <ListItemText primary="Rate Freelancer" sx={{ textDecoration: "none", color: "white" }} />
-                                        :
-                                        <ListItemText primary="Rate Employer" sx={{ textDecoration: "none", color: "white" }} />}
+                                    {
+                                        localStorage.getItem("employer_id") ?
+                                            <ListItemText primary="Rate Freelancer" sx={{ textDecoration: "none", color: "white" }} />
+                                            :
+                                            <ListItemText primary="Rate Employer" sx={{ textDecoration: "none", color: "white" }} />}
                                 </ListItemButton>
-                            </Link>
+                            </Link>}
 
                             {localStorage.getItem("admin_id") ?
                                 <Link to="/admin_dashboard">
@@ -385,11 +389,17 @@ export default function Admin_Dashboard() {
                                         <Paper style={{ height: "80px" }}>{dashboard.project_demo}</Paper>
                                     </Grid>
                                     <Grid item xs={6}>
+                                        {dashboard.project_file != "" ?
+                                            <>
+                                                <Paper style={{ height: "80px" }}><IconButton onClick={() => file_download(process.env.REACT_APP_HOST + "images/" + dashboard.project_file, dashboard.project_file.substring(16))}>
+                                                    <DownloadForOfflineIcon fontSize="large" color="#8f78ff" sx={{ color: "#8f78ff" }} />
+                                                </IconButton>{dashboard.project_file.substring(16)}</Paper>
+                                                <a href={process.env.REACT_APP_HOST + "images/" + dashboard.project_file} target="_blank">View</a>
+                                            </>
+                                            :
+                                            <Paper style={{ height: "80px" }}></Paper>
+                                        }
 
-                                        <Paper style={{ height: "80px" }}><IconButton onClick={() => file_download(process.env.REACT_APP_HOST + "images/" + dashboard.project_file, dashboard.project_file.substring(16))}>
-                                            <DownloadForOfflineIcon fontSize="large" color="#8f78ff" sx={{ color: "#8f78ff" }} />
-                                        </IconButton>{dashboard.project_file.substring(16)}</Paper>
-                                        <a href={process.env.REACT_APP_HOST + "images/" + dashboard.project_file} target="_blank">View</a>
                                     </Grid>
                                     <Grid item xs={6}>
                                         {localStorage.getItem("freelancer_id") ?

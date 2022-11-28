@@ -365,7 +365,7 @@ export default function EnhancedTable() {
           startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: "#8f78ff" }} /></InputAdornment>,
         }}
         label="Search"
-        helperText="Search by Name, Email, Company Name, Phone number, Country"
+        helperText="Search by Name, Email, Phone number, Country"
         fullWidth value={search_text} onChange={search} />
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={myselected.length} onDelete={onDelete} onUpdate={onUpdate} selected_id={myselected} />

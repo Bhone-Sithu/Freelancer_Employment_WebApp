@@ -37,15 +37,15 @@ export default function Login() {
         if (res.status == 200) {
             if (res.role == "admin") {
                 localStorage.setItem("admin_id", res.id);
-                setTimeout(() => { navigate("/admin_dashboard") }, 5000);
+                setTimeout(() => { navigate("/admin_dashboard") }, 3000);
             }
             if (res.role == "employer") {
                 localStorage.setItem("employer_id", res.id);
-                setTimeout(() => { navigate("/project_feed") }, 5000);
+                setTimeout(() => { navigate("/project_feed") }, 3000);
             }
             if (res.role == "freelancer") {
                 localStorage.setItem("freelancer_id", res.id)
-                setTimeout(() => { navigate("/project_feed") }, 5000);
+                setTimeout(() => { navigate("/project_feed") }, 3000);
 
             }
         }

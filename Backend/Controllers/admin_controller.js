@@ -12,7 +12,7 @@ var transporter = nodemailer.createTransport({
         ciphers: 'SSLv3'
     },
     auth: {
-        user: 'lancer.system@outlook.com',
+        user: 'lancer_system@outlook.com',
         pass: 'Bhonesithu1418'
     }
 });
@@ -61,7 +61,7 @@ const approve_account = async (req, res) => {
         
 
         var mailOptions = {
-            from: 'Lancer.system@outlook.com',
+            from: 'lancer_system@outlook.com',
             to: approved.email,
             subject: 'Employer Account Approval',
             text: 'Congratulation! Your Employer account registration has been accepted by our admin. You can now login to our website and use our services'
@@ -71,7 +71,7 @@ const approve_account = async (req, res) => {
         approved = await Freelancer.findByIdAndUpdate(req.params.id, { is_approved: true }, { new: true });
 
         var mailOptions = {
-            from: 'Lancer.system@outlook.com',
+            from: 'lancer_system@outlook.com',
             to: approved.email,
             subject: 'Freelancer Account Approval',
             text: 'Congratulation! Your freelancer account registration has been accepted by our admin. You can now login to our website and use our services'
@@ -97,7 +97,7 @@ const reject_account = async (req, res) => {
         
 
         var mailOptions = {
-            from: 'Lancer.system@outlook.com',
+            from: 'lancer_system@outlook.com',
             to: approved.email,
             subject: 'Employer Account Rejection',
             text: 'We are sorry to inform that your Employer account registration has been rejected by our admin. This happen due to your provided detail do not meet our Lancer\'s background checking guideline. You have to register again with more reasonable details.'
@@ -107,7 +107,7 @@ const reject_account = async (req, res) => {
         approved = await Freelancer.findByIdAndDelete(req.params.id);
 
         var mailOptions = {
-            from: 'Lancer.system@outlook.com',
+            from: 'lancer_system@outlook.com',
             to: approved.email,
             subject: 'Freelancer Account Rejection',
             text: 'We are sorry to inform that your Freelancer account registration has been rejected by our admin. This happen due to your provided detail do not meet our Lancer\'s background checking guideline. You have to register again with more reasonable details.'
@@ -126,7 +126,7 @@ const approve_project = async (req, res) => {
     let approved = await Project.findByIdAndUpdate(req.params.id, { is_approved: true, }, { new: true });
     let employer = await Employer.findById(approved.employer_id);
     var mailOptions = {
-        from: 'Lancer.system@outlook.com',
+        from: 'lancer_system@outlook.com',
         to: employer.email,
         subject: 'Project Post Request  Approval',
         text: 'Your project\'s post request has been accepted by our admin. You can accept a freelancer or invite for your project. After confirming a freelancer, you must transfer the project\'s payment to admin as a deposit in order to start the project.'
@@ -144,7 +144,7 @@ const reject_project = async (req, res) => {
     let approved = await Project.findByIdAndDelete(req.params.id);
     let employer = await Employer.findById(approved.employer_id);
     var mailOptions = {
-        from: 'Lancer.system@outlook.com',
+        from: 'lancer_system@outlook.com',
         to: employer.email,
         subject: 'Project Post Request  Rejection',
         text: 'Your project\'s post request has been rejected by our admin. This happen due to your provided detail do not meet our Lancer\'s background checking guideline. You have to register again with more reasonable details.'
