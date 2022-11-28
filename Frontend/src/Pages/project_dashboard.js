@@ -86,8 +86,12 @@ export default function Admin_Dashboard() {
     const [projects, setProjects] = React.useState({});
     const [dashboard, setDashboard] = React.useState({ requirement: "", project_file: "" });
     const [dialog, setDialog] = React.useState({ open: false });
+    const [reload, setReload] = React.useState(false);
     const { id } = useParams();
-
+    const set_complete = () => {
+        update_dashboard("complete",{},dashboard);
+        setReload(!reload);
+    }
     const upload_file = (file_data) => {
         upload(file_data, dashboard)
     }
@@ -127,7 +131,7 @@ export default function Admin_Dashboard() {
                 console.log(error);
             })
 
-    }, [dialog])
+    }, [reload,dialog])
 
     return (
         <ThemeProvider theme={mdTheme}>
@@ -422,7 +426,7 @@ export default function Admin_Dashboard() {
                                     </Grid>
                                     <Grid item xs={12} sx={{ mb: 1 }} >
                                         {localStorage.getItem("employer_id") ?
-                                            <Button variant="contained" fullWidth sx={{ height: "50px", backgroundColor: "#8f78ff", color: "white" }} >Set Project as complete</Button>
+                                            <Button variant="contained" fullWidth sx={{ height: "50px", backgroundColor: "#8f78ff", color: "white" }} onClick={set_complete}>Set Project as complete</Button>
                                             :
                                             <Button variant="contained" fullWidth sx={{ height: "50px", backgroundColor: "#8f78ff", color: "white" }} disabled>Set Project as complete</Button>
                                         }

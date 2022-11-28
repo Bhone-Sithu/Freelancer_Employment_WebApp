@@ -24,13 +24,16 @@ import Box from '@mui/material/Box'
 import { apply_project } from '../Components/Function/project_function'
 import { Link as RouterLink, useNavigate } from "react-router-dom"
 import Link from '@mui/material/Link';
+import Nav from '../Components/UI/nav'
 function FeaturedPost() {
     const { id } = useParams();
     const [project, setProject] = useState({ candidate: [] });
     const [status, setStatus] = useState(0);
     let navigate = useNavigate();
     const [freelancers, setFreelancers] = useState([]);
-    const [freelancer, setFreelancer] = useState({});
+    const [freelancer, setFreelancer] = useState({
+        name: ""
+    });
     const [employer, setEmployer] = useState({});
     // let freelancers = []
     const freelancer_id = localStorage.getItem("freelancer_id");
@@ -41,6 +44,7 @@ function FeaturedPost() {
                     setProject(response.data);
                     axios.get(process.env.REACT_APP_HOST + `api/freelancers/get/${response.data.freelancer_id}`)
                         .then((res) => {
+
                             setFreelancer(res.data);
                         })
                         .catch((error) => {
@@ -94,155 +98,159 @@ function FeaturedPost() {
         navigate(`/freelancer_view/${fid}`)
     }
     return (
-        <Container component="main" maxWidth="lg">
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <Grid container spacing={2}>
-                    <Grid item xs={12} md={9}>
-                        <Card sx={{ display: 'flex' }}>
-                            <CardContent sx={{ flex: 1 }}>
-                                <Typography component="h1" variant="h2">
-                                    {project.title}
-                                </Typography>
-                                <Typography variant="subtitle1" color="text.secondary">
-                                    deadline: {project.deadline}
-                                </Typography>
-                                <Typography variant="body1" paragraph>
-                                    {project.description}
-                                </Typography>
-                                <Typography variant="body1" paragraph>
-                                    Required Skillset : {project.skillset}
-                                </Typography>
-                                <Typography variant="body1" paragraph>
-                                    Preferred Languages : {project.language}
-                                </Typography>
-                                <Typography variant="body1" paragraph>
-                                    Payment : {project.payment} $
-                                </Typography>
-                                <Typography variant="body1" paragraph>
-                                    The post is expired in {project.expire_date} days.
-                                </Typography>
-                                <Typography variant="body1" paragraph>
-                                    Employer name : {employer.name}
-                                </Typography>
-                                {project.freelancer_id != "" ?
+        <div style={{ backgroundColor: "#c7fdff", paddingBottom:"10%" }}>
+            <Nav />
+            <Container component="main" maxWidth="lg" sx={{
+                alignItems: 'center',
+            }} >
+                <Box
+                    sx={{
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={9}>
+                            <Card sx={{ display: 'flex' }}>
+                                <CardContent sx={{ flex: 1 }}>
+                                    <Typography component="h1" variant="h2">
+                                        {project.title}
+                                    </Typography>
+                                    <Typography variant="subtitle1" color="text.secondary">
+                                        deadline: {project.deadline}
+                                    </Typography>
                                     <Typography variant="body1" paragraph>
-                                        Freelancer name {freelancer.name}
-                                    </Typography> : null}
-                                {localStorage.getItem("employer_id")?
+                                        {project.description}
+                                    </Typography>
                                     <Typography variant="body1" paragraph>
-                                        Admin id {project.admin_id}
-                                    </Typography> : null}
+                                        Required Skillset : {project.skillset}
+                                    </Typography>
+                                    <Typography variant="body1" paragraph>
+                                        Preferred Languages : {project.language}
+                                    </Typography>
+                                    <Typography variant="body1" paragraph>
+                                        Payment : {project.payment} $
+                                    </Typography>
+                                    <Typography variant="body1" paragraph>
+                                        The post is expired in {project.expire_date} days.
+                                    </Typography>
+                                    <Typography variant="body1" paragraph>
+                                        Employer name : {employer.name}
+                                    </Typography>
+                                    {project.freelancer_id != "" ?
+                                        <Typography variant="body1" paragraph>
+                                            Freelancer name {freelancer.name}
+                                        </Typography> : null}
+                                    {localStorage.getItem("employer_id") ?
+                                        <Typography variant="body1" paragraph>
+                                            Admin id {project.admin_id}
+                                        </Typography> : null}
 
-                            </CardContent>
+                                </CardContent>
 
-                        </Card>
+                            </Card>
 
+                        </Grid>
+                        <Grid item xs={12} md={3}>
+                            {localStorage.getItem("employer_id") == project.employer_id ?
+                                project.freelancer_id != "" ?
+                                    <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
+                                        <Alert severity="success"> You have successfully accepted {freelancer.name} for this project.</Alert>
+                                    </Grid>
+                                    :
+                                    <Box sx={{ width: '100%' }}>
+                                        <List>
+                                            {
+                                                project.candidate.map((freelancer, i) =>
+                                                    <div>
+                                                        <ListItem disablePadding>
+                                                            {/* <Button component={RouterLink} to="/" color="inherit" sx={{ display: 'flex' }}> */}
+                                                            <ListItemIcon>
+                                                                <InboxIcon />
+                                                            </ListItemIcon>
+                                                            {freelancers[i] ?
+                                                                <>
+                                                                    <ListItemText primary={freelancers[i].name} />
+                                                                    <Button
+
+                                                                        onClick={() => accept(freelancers[i]._id)}
+                                                                        variant="contained"
+                                                                        sx={{ mt: 3, mb: 2 }}
+                                                                    >
+                                                                        View
+                                                                    </Button>
+                                                                </>
+                                                                : null}
+
+                                                            {/* </Button> */}
+
+
+                                                        </ListItem>
+                                                        <Divider />
+                                                    </div>
+
+                                                )
+                                            }
+
+
+                                        </List>
+
+                                    </Box>
+                                : null
+                            }
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} md={3}>
-                        {localStorage.getItem("employer_id") == project.employer_id ?
-                            project.freelancer_id != "" ?
-                                <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
-                                    <Alert severity="success"> You have successfully accepted {freelancer.name} for this project.</Alert>
-                                </Grid>
-                                :
-                                <Box sx={{ width: '100%' }}>
-                                    <List>
-                                        {
-                                            project.candidate.map((freelancer, i) =>
-                                                <div>
-                                                    <ListItem disablePadding>
-                                                        {/* <Button component={RouterLink} to="/" color="inherit" sx={{ display: 'flex' }}> */}
-                                                        <ListItemIcon>
-                                                            <InboxIcon />
-                                                        </ListItemIcon>
-                                                        {freelancers[i] ?
-                                                            <>
-                                                                <ListItemText primary={freelancers[i].name} />
-                                                                <Button
-
-                                                                    onClick={() => accept(freelancers[i]._id)}
-                                                                    variant="contained"
-                                                                    sx={{ mt: 3, mb: 2 }}
-                                                                >
-                                                                    View
-                                                                </Button>
-                                                            </>
-                                                            : null}
-
-                                                        {/* </Button> */}
-
-
-                                                    </ListItem>
-                                                    <Divider />
-                                                </div>
-
-                                            )
-                                        }
-
-
-                                    </List>
-
-                                </Box>
-                            : null
-                        }
-                    </Grid>
-                </Grid>
-            </Box>
-            {localStorage.getItem("employer_id") == project.employer_id ?
-                project.freelancer_id == "" ? project.is_approved ?
-                    <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
-                        <Button
-                            fullWidth
-                            onClick={() => invite(project._id)}
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Invite a Freelancer
-                        </Button>
-                    </Grid> : null : null
-                : null}
-            {
-                project.dashboard_id !== "" ?
-                    <Grid item xs={12} sx={{ mt: 2, mb: 2 }}>
-                        <Button
-                            fullWidth
-                            onClick={() => navigate(`../../project_dashboard/${project._id}`)}
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Go to Project Dashboard
-                        </Button>
-                    </Grid> : null
-            }
-            {localStorage.getItem("freelancer_id") ?
-                status == "200" ?
-                    <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
-                        <Alert severity="success"> You have successfully applied for this project.</Alert>
-                    </Grid> :
-                    project.candidate.includes(freelancer_id) ?
+                </Box>
+                {localStorage.getItem("employer_id") == project.employer_id ?
+                    project.freelancer_id == "" ? project.is_approved ?
                         <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
-                            <Alert severity="error"> You have already applied for this project. Please wait for the email for acceptance.</Alert>
+                            <Button
+                                fullWidth
+                                onClick={() => invite(project._id)}
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Invite a Freelancer
+                            </Button>
+                        </Grid> : null : null
+                    : null}
+                {
+                    project.dashboard_id !== "" ?
+                        <Grid item xs={12} sx={{ mt: 2, mb: 2 }}>
+                            <Button
+                                fullWidth
+                                onClick={() => navigate(`../../project_dashboard/${project._id}`)}
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Go to Project Dashboard
+                            </Button>
+                        </Grid> : null
+                }
+                {localStorage.getItem("freelancer_id") ?
+                    status == "200" ?
+                        <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
+                            <Alert severity="success"> You have successfully applied for this project.</Alert>
                         </Grid> :
-                        <Button
-                            fullWidth
-                            onClick={() => apply()}
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Apply
-                        </Button>
-                : null
-            }
+                        project.candidate.includes(freelancer_id) ?
+                            <Grid item xs={12} sx={{ mt: 3, mb: 2 }}>
+                                <Alert severity="error"> You have already applied for this project. Please wait for the email for acceptance.</Alert>
+                            </Grid> :
+                            <Button
+                                fullWidth
+                                onClick={() => apply()}
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Apply
+                            </Button>
+                    : null
+                }
 
-        </Container>
-
+            </Container>
+        </div>
     );
 }
 

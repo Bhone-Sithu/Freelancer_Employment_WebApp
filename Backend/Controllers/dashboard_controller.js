@@ -22,7 +22,8 @@ const update_dashboard = async (req, res) => {
         progress: req.body.progress,
         version: req.body.version,
         project_demo: req.body.project_demo,
-        project_file: req.body.project_file
+        project_file: req.body.project_file,
+        is_complete : req.body.is_complete
     }
     const updated = await Dashboard.findByIdAndUpdate(req.params.id, dashboard, { new: true });
     res.status(200).json(updated);

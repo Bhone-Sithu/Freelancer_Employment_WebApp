@@ -21,7 +21,7 @@ import ListSubheader from '@mui/material/ListSubheader';
 import { post_project } from '../Components/Function/project_function';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { FormHelperText } from '@mui/material';
-
+import Nav from '../Components/UI/nav'
 
 const theme = createTheme();
 
@@ -84,18 +84,16 @@ export default function Post_Project() {
     return (
         <ThemeProvider theme={theme}>
             <div>
-                <Container component="main" maxWidth="md" >
+                <Nav/>
+                <Container component="main" maxWidth="md" sx={{mb:5,mt:0}}>
                     <CssBaseline />
                     <Box
                         sx={{
-                            marginTop: 8,
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
                         }}
                     >
-                        <img src='Lancer_logo.png' width={200} height={200} style={{ borderRadius: "50%" }} />
-                        <br></br>
                         <Typography component="h1" variant="h5">
                             Post Project
                         </Typography>

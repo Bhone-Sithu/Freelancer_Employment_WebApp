@@ -259,6 +259,7 @@ export default function EnhancedTable() {
   const [employers, setEmployers] = React.useState([]);
   const [myselected, setMySelected] = React.useState('');
   const [search_text, setSearch_Text] = React.useState('');
+  const [reload,setReload] = React.useState('');
   const search = (e) => {
    
       axios.post(process.env.REACT_APP_HOST + "api/freelancers/search", { name: e.target.value })
@@ -281,7 +282,8 @@ export default function EnhancedTable() {
   const onDelete = async (id) => {
     const status = await freelancer_delete(id);
     setMySelected("");
-    // setEmployers(employers);
+    setEmployers(employers);
+    setReload(!reload);
   }
   const onUpdate = async (id) => {
     navigate(`../update_freelancer/${id}`)
@@ -295,7 +297,7 @@ export default function EnhancedTable() {
         console.log(error);
       })
 
-  },[])
+  },[reload])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

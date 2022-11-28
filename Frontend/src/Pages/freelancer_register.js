@@ -3,7 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -25,6 +24,7 @@ import { freelancer_register } from '../Components/Function/freelancer_function'
 import { IconButton, Paper } from '@mui/material';
 import InsertDriveFile from '@mui/icons-material/InsertDriveFile';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 let countryList = require('../country.js')
 
 const theme = createTheme();
@@ -333,7 +333,7 @@ export default function Freelancer_Register() {
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="#" variant="body2" sx={{ textDecoration: "none" }}>
+                                <Link to="../login" variant="body2" sx={{ textDecoration: "none" }}>
                                     Already have an account? Login
                                 </Link>
                             </Grid>

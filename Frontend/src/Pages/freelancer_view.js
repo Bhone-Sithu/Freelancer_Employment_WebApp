@@ -77,8 +77,8 @@ function FeaturedPost() {
                         <Grid item xs={12}>
                             <Card sx={{ display: 'flex' }}>
                                 <CardContent sx={{ flex: 1 }}>
-                                    <div style={{ backgroundColor: "#8f78ff", width: "fit-content", borderRadius: 100 }}>
-                                        <img src={process.env.REACT_APP_HOST + `images/${freelancer.cv}`} width="150" height="150" />
+                                    <div style={{ backgroundColor: "#8f78ff", padding:5, borderRadius: 100,width:"fit-content" }}>
+                                        <img src={process.env.REACT_APP_HOST + `images/${freelancer.profile_photo}`} width="150" height="150" style={{ backgroundColor: "#8f78ff",  borderRadius: 100 }} />
                                     </div>
 
                                     <Typography component="h1" variant="h2">

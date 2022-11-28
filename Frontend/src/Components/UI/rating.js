@@ -21,7 +21,7 @@ function Rating_Form(props) {
     const [feedback, setFeedBack] = useState((localStorage.getItem("employer_id") ? dashboard.freelancer_rating && dashboard.freelancer_rating.feedback : dashboard.employer_rating && dashboard.employer_rating.feedback));
     const [star, setStar] = useState((localStorage.getItem("employer_id") ? dashboard.freelancer_rating && dashboard.freelancer_rating.star : dashboard.employer_rating && dashboard.employer_rating.star));
     const [hover, setHover] = useState(-1);
-    const [status,setStatus] = useState(0);
+    const [status, setStatus] = useState(0);
     const rate = async (event) => {
         event.preventDefault();
         const rating = {
@@ -38,7 +38,7 @@ function Rating_Form(props) {
     }
     return (
         <>
-            <div style={{ paddingLeft:30,paddingRight:30, paddingTop:15, height: "100%",width:"100%", backgroundColor: "#c7fdff" }}>
+            <div style={{ paddingLeft: 30, paddingRight: 30, paddingTop: 15, height: "100%", width: "100%", backgroundColor: "#c7fdff" }}>
                 <center>
                     <Typography variant="h6">{localStorage.getItem("employer_id") ? "Rate Freelancer" : "Rate Employer"}</Typography>
 
@@ -75,14 +75,25 @@ function Rating_Form(props) {
                         <Alert severity="success">Rating Successful. You can change the rating anytime.</Alert>
                     </Grid>}
                 <center>
-                    <Button
+                    {dashboard.is_complete ? <Button
                         onClick={rate}
                         variant="contained"
                         sx={{ mt: 2, px: 20, py: 2, mb: 5, backgroundColor: "#8f78ff", borderRadius: "10px" }}
                         size="large"
                     >
                         Rate
-                    </Button>
+                    </Button> :
+                        <>
+                            <Button
+                                onClick={rate}
+                                variant="contained"
+                                sx={{ mt: 2, px: 20, py: 2, mb: 5, backgroundColor: "#8f78ff", borderRadius: "10px" }}
+                                size="large"
+                                disabled
+                            >
+                                Rate (The Project is not Completed Yet)
+                            </Button></>}
+
                 </center>
 
             </div>

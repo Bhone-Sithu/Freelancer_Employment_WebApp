@@ -113,9 +113,10 @@ export default function Admin_Dashboard() {
     };
     const search = (e) => {
         setSearch_Freelancer(e.target.value);
-        if (param["*"] == "freelancers_list") {
+        if (param["*"] == "freelancers_list/") { 
             axios.post(process.env.REACT_APP_HOST + "api/freelancers/search", { name: e.target.value })
                 .then((response) => {
+                    
                     setFreelancers(response.data);
                 })
                 .catch((error) => {
@@ -182,6 +183,13 @@ export default function Admin_Dashboard() {
                 })
         }
         if (localStorage.getItem("freelancer_id")) {
+            axios.get(process.env.REACT_APP_HOST + `api/projects/freelancer_get_project/${localStorage.getItem("freelancer_id")}`)
+                .then((response) => {
+                    setMyProjects(response.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
             axios.get(process.env.REACT_APP_HOST + `api/freelancers/get/${freelancer_id}`)
                 .then((response) => {
                     setFreelancer(response.data);

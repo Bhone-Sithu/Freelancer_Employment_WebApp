@@ -126,7 +126,7 @@ const Chat = (props) => {
                                                 <Paper elevation={3} sx={{ width: 'fit-content', height: 'fit-content', px: 2, py: 0.5, backgroundColor: "#8f78ff", color: "white", borderRadius: "5px" }}>
                                                     <Grid container>
                                                         <IconButton onClick={() => file_download(process.env.REACT_APP_HOST + "images/" + val.file_path, val.file_path.substring(11))}>
-                                                            <DownloadForOfflineIcon fontSize="large" />
+                                                            <DownloadForOfflineIcon fontSize="large" sx={{color:"#c7fdff"}}/>
                                                         </IconButton>
                                                         <Typography variant='body1' sx={{ p: 1 }}>
                                                             {val.file_path.substring(11)}
@@ -170,7 +170,7 @@ const Chat = (props) => {
                                                 <Paper elevation={3} sx={{ width: 'fit-content', height: 'fit-content', px: 2, py: 0.5, borderRadius: "5px" }}>
                                                     <Grid container>
                                                         <IconButton onClick={() => file_download(process.env.REACT_APP_HOST + "images/" + val.file_path, val.file_path.substring(11))}>
-                                                            <DownloadForOfflineIcon fontSize="large" />
+                                                            <DownloadForOfflineIcon fontSize="large" sx={{color:"#8f78ff"}}/>
                                                         </IconButton>
                                                         <Typography variant='body1' sx={{ p: 1 }}>
                                                             {val.file_path.substring(11)}

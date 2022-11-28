@@ -16,6 +16,7 @@ const update_dashboard = async(title,form_data,data) => {
     }
     if(title == "Edit Demo") dashboard.project_demo = form_data.text;
     if(title == "Upload File") dashboard.project_file= form_data.text;
+    if(title == "complete") dashboard.is_complete= true;
 
     let res = await axios.put(process.env.REACT_APP_HOST + `api/dashboards/update/${data._id}`,dashboard)
         return res.status;

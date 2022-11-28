@@ -26,9 +26,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
 import { freelancer_delete } from '../Function/freelancer_function';
 import { approve, start } from '../Function/admin_function';
-import { Grid } from '@mui/material';
+import { Grid, InputAdornment, TextField } from '@mui/material';
 import { project_delete } from '../Function/project_function';
 import { useNavigate } from 'react-router-dom';
+import SearchIcon from '@mui/icons-material/Search';
 function createData(name, calories, fat, carbs, protein) {
     return {
         name,
@@ -203,6 +204,7 @@ EnhancedTableHead.propTypes = {
 };
 
 const EnhancedTableToolbar = (props) => {
+    const navigate = useNavigate();
     const { numSelected, onDelete, onUpdate, selected_id, onStart } = props;
 
     return (
@@ -238,7 +240,7 @@ const EnhancedTableToolbar = (props) => {
 
             {numSelected > 0 ? (
                 <>
-                    <Grid container  sx={{justifyContent:'space-between'}}>
+                    <Grid container sx={{ justifyContent: 'space-between' }}>
                         <Grid item >
                             <Tooltip title="Delete">
                                 <Button variant="outlined" startIcon={<DeleteIcon />} onClick={() => onDelete(selected_id)}>
@@ -257,6 +259,15 @@ const EnhancedTableToolbar = (props) => {
                             <Tooltip title="Start">
                                 <Button variant="outlined" startIcon={<EditIcon />} onClick={() => onStart(selected_id)}>
                                     Start
+                                </Button>
+                            </Tooltip>
+                        </Grid>
+                        <Grid item >
+                            <Tooltip title="Dashboard">
+                                <Button variant="outlined"  onClick={() => {
+                                    navigate("../../" + `project_dashboard/${selected_id}`)
+                                }}>
+                                    Dashboard
                                 </Button>
                             </Tooltip>
                         </Grid>
@@ -285,9 +296,22 @@ export default function EnhancedTable() {
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
+    const [reload, setReload] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [employers, setEmployers] = React.useState([]);
     const [myselected, setMySelected] = React.useState('');
+    const [search_text, setSearch_Text] = React.useState('');
+    const search = (e) => {
+        axios.post(process.env.REACT_APP_HOST + "api/projects/search", { name: e.target.value })
+            .then((response) => {
+                setEmployers(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+
+        setSearch_Text(e.target.value)
+    }
 
     const handleMySelect = (id) => {
         if (id == myselected) {
@@ -300,14 +324,16 @@ export default function EnhancedTable() {
         const status = await project_delete(id);
         setMySelected("");
         // setEmployers(employers);
+        setReload(!reload)
     }
     const onUpdate = async (id) => {
-        navigate("../update_project/" + id) 
-        
+        navigate("../update_project/" + id)
+
     }
-    const onStart = async(id)=>{
+    const onStart = async (id) => {
         const status = await start(id);
         setMySelected("");
+        setReload(!reload)
     }
     useEffect(() => {
         axios.get(process.env.REACT_APP_HOST + "api/projects/get")
@@ -318,7 +344,7 @@ export default function EnhancedTable() {
                 console.log(error);
             })
 
-    })
+    },[reload])
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -376,6 +402,18 @@ export default function EnhancedTable() {
 
     return (
         <Box sx={{ width: '100%', ml: 1.5 }}>
+            <TextField
+                sx={{
+                    mb: 4,
+                    mt: 5,
+                    backgroundColor: "white"
+                }}
+                InputProps={{
+                    startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: "#8f78ff" }} /></InputAdornment>,
+                }}
+                label="Search"
+                helperText="Search by Name, Email, Company Name, Phone number, Country"
+                fullWidth value={search_text} onChange={search} />
             <Paper sx={{ width: '100%', mb: 2 }}>
                 <EnhancedTableToolbar numSelected={myselected.length} onDelete={onDelete} onUpdate={onUpdate} onStart={onStart} selected_id={myselected} />
                 <TableContainer>

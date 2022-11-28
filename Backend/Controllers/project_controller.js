@@ -86,6 +86,10 @@ const employer_get_project = async (req, res) => {
     const projects = await Project.find({ employer_id: req.params.id })
     res.status(200).json(projects);
 }
+const freelancer_get_project = async (req, res) => {
+    const projects = await Project.find({ freelancer_id: req.params.id })
+    res.status(200).json(projects);
+}
 const project_filter = async (req, res) => {
     const skill = req.body.skillset;
     const lang = req.body.language;
@@ -173,5 +177,6 @@ module.exports = {
     invite_freelancer,
     project_filter,
     project_search,
-    project_update_from_admin
+    project_update_from_admin,
+    freelancer_get_project
 }
