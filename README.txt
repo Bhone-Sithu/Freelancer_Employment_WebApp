@@ -20,3 +20,6 @@ Then, run "npm run server" on root folder
 
 Run "npm run start" on Frontend folder. Running this command will launch the project on the browser.
 If there are any port problems, edit the  number of port in .env file in both directories
+
+Go to http://localhost:3000/login 
+The project will start there
