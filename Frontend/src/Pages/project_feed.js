@@ -113,10 +113,10 @@ export default function Admin_Dashboard() {
     };
     const search = (e) => {
         setSearch_Freelancer(e.target.value);
-        if (param["*"] == "freelancers_list/") { 
+        if (param["*"] == "freelancers_list/") {
             axios.post(process.env.REACT_APP_HOST + "api/freelancers/search", { name: e.target.value })
                 .then((response) => {
-                    
+
                     setFreelancers(response.data);
                 })
                 .catch((error) => {
@@ -193,25 +193,28 @@ export default function Admin_Dashboard() {
             axios.get(process.env.REACT_APP_HOST + `api/freelancers/get/${freelancer_id}`)
                 .then((response) => {
                     setFreelancer(response.data);
+                    response.data.invitations.map((project_id) => {
+                        axios.get(process.env.REACT_APP_HOST + `api/projects/get/${project_id}`)
+                            .then((response) => {
+                                setInvitation((prev) => [
+                                    ...prev,
+                                    response.data
+                                ])
+
+
+                            })
+                    })
 
                 })
                 .catch((error) => {
                     console.log(error);
                 })
+
         }
 
+
     }, [reload])
-    freelancer.invitations.map((project_id) => {
-        axios.get(process.env.REACT_APP_HOST + `api/projects/get/${project_id}`)
-            .then((response) => {
-                setInvitation((prev) => [
-                    ...prev,
-                    response.data
-                ])
 
-
-            })
-    })
     const effect_function = async () => {
 
     }
@@ -271,7 +274,7 @@ export default function Admin_Dashboard() {
                             <FormControl fullWidth sx={{ m: 2 }}>
                                 <InputLabel id="languages">Language</InputLabel>
                                 <Select
-                                    sx={{ backgroundColor: "white", borderColor: "#cf7dff" ,overflow:"hidden"  }}
+                                    sx={{ backgroundColor: "white", borderColor: "#cf7dff", overflow: "hidden" }}
                                     labelId="languages"
                                     id="language"
                                     value={language}
@@ -293,7 +296,7 @@ export default function Admin_Dashboard() {
                             <FormControl fullWidth sx={{ m: 2 }}>
                                 <InputLabel id="skillsets">Skills</InputLabel>
                                 <Select
-                                    sx={{ backgroundColor: "white",overflow:"hidden" }}
+                                    sx={{ backgroundColor: "white", overflow: "hidden" }}
                                     labelId="skillsets"
                                     id="skillset"
                                     value={skillset}
@@ -314,7 +317,7 @@ export default function Admin_Dashboard() {
 
                                 </Select>
                             </FormControl>
-                            <ListItemButton onClick={filter} sx={{width:"100%", mb:5,mt:3, backgroundColor: "#c7fdff", color: "black" }}>
+                            <ListItemButton onClick={filter} sx={{ width: "100%", mb: 5, mt: 3, backgroundColor: "#c7fdff", color: "black" }}>
                                 <ListItemIcon>
                                     <FilterAltIcon sx={{ textDecoration: "none", color: "black" }} />
 
@@ -326,7 +329,7 @@ export default function Admin_Dashboard() {
                                 setSkillset("");
                                 setLanguage("");
                                 setReload(!reload)
-                            }} sx={{width:"100%", backgroundColor: "#ff4f58", color: "white" }}>
+                            }} sx={{ width: "100%", backgroundColor: "#ff4f58", color: "white" }}>
                                 <ListItemIcon>
                                     <HighlightOffIcon sx={{ textDecoration: "none", color: "white" }} />
 
@@ -334,7 +337,7 @@ export default function Admin_Dashboard() {
 
                                 <ListItemText primary="Clear Filter" sx={{ textDecoration: "none", color: "white" }} />
                             </ListItemButton>
-                            
+
                         </Grid>
                     </div>
                 </Drawer>

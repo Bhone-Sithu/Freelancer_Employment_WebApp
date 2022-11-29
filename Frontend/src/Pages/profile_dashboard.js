@@ -123,13 +123,27 @@ export default function Admin_Dashboard() {
             effect_ran = true;
         }
 
-        // axios.get(process.env.REACT_APP_HOST + `api/freelancers/get/${id}`)
-        //     .then(res => {
-        //         setUser(res.data)
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     })
+        axios.get(process.env.REACT_APP_HOST + `api/freelancers/get/${id}`)
+            .then(res => {
+                setUser(res.data)
+                axios.get(process.env.REACT_APP_HOST + `api/projects/freelancer_get_project/${id}`)
+                    .then(res => {
+                        setProjects(res.data)
+                        res.data.map(project => {
+                            if (project.dashboard_id != "") {
+                                axios.get(process.env.REACT_APP_HOST + `api/dashboards/get/${project.dashboard_id}`)
+                                    .then(res => {
+                                        res.data.freelancer_rating && setRating(original => [...original, res.data.freelancer_rating]);
+
+                                    })
+                            }
+
+                        })
+                    })
+            })
+            .catch((error) => {
+                console.log(error);
+            })
 
 
     }, [])
